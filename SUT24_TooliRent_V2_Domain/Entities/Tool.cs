@@ -25,7 +25,7 @@ public class Tool
     [Required] 
     public bool DemandsCertification { get; set; }
 
-    public ToolCondition? Condition { get; set; }
+    public ToolCondition Condition { get; set; }
     
     [Required]
     public ToolCategory Category { get; set; }
