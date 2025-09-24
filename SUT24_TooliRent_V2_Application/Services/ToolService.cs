@@ -10,17 +10,17 @@ namespace SUT24_TooliRent_V2_Application.Services;
 
 public class ToolService : IToolService
 {
-    private readonly IToolRepository _toolRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     
-    public ToolService(IToolRepository toolRepository, IMapper mapper)
+    public ToolService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _toolRepository = toolRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
     public async Task<IEnumerable<ReadToolDto>> GetAllToolsAsync(CancellationToken ct = default)
     {
-        var tools = await _toolRepository.GetAllToolsAsync(ct);
+        var tools = await  _unitOfWork.Tools.GetAllToolsAsync(ct);
 
         return _mapper.Map<IEnumerable<ReadToolDto>>(tools);
     }
@@ -37,7 +37,7 @@ public class ToolService : IToolService
 
     public async Task<IEnumerable<ReadToolDto>> GetToolsByCategoryAsync(ToolCategory category, CancellationToken ct = default)
     {
-        var tools = await _toolRepository.GetToolsByCategoryAsync(category, ct);
+        var tools = await _unitOfWork.Tools.GetToolsByCategoryAsync(category, ct);
 
         return _mapper.Map<IEnumerable<ReadToolDto>>(tools); 
     }
