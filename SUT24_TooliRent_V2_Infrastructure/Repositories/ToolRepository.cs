@@ -66,22 +66,22 @@ public class ToolRepository : IToolRepository
             .ToListAsync(ct);
     }
 
-    public void AddToolAsync(Tool tool, CancellationToken ct = default)
+    public void AddTool(Tool tool, CancellationToken ct = default)
     {
         _context.Tools.AddAsync(tool, ct);
     }
 
-    public void UpdateToolAsync(Tool tool, CancellationToken ct = default)
+    public void UpdateTool(Tool tool, CancellationToken ct = default)
     {
        _context.Tools.Update(tool);
     }
 
-    public void DeleteToolAsync(int id, CancellationToken ct = default)
+    public void DeleteTool(int id, CancellationToken ct = default)
     {
         _context.Tools.Remove(new Tool { Id = id });
     }
 
-    public void ToolExistsAsync(int id, CancellationToken ct = default)
+    public void ToolExists(int id, CancellationToken ct = default)
     {
         _context.Tools.Any(t => t.Id == id);
     }
