@@ -42,19 +42,30 @@ public class ToolService : IToolService
         return _mapper.Map<IEnumerable<ReadToolDto>>(tools); 
     }
 
-    public Task<IEnumerable<ReadToolDto>> GetToolsByConditionAsync(ToolCondition condition, CancellationToken ct = default)
+    public async Task<IEnumerable<ReadToolDto>> GetToolsByConditionAsync(ToolCondition condition, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var tools = await _unitOfWork.Tools.GetToolsByConditionAsync(condition, ct); 
+        
+        return _mapper.Map<IEnumerable<ReadToolDto>>(tools);
     }
 
-    public Task<IEnumerable<ReadToolDto>> GetAvailableToolsAsync(CancellationToken ct = default)
+    public async Task<IEnumerable<ReadToolDto>> GetAvailableToolsAsync(CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var tools = await _unitOfWork.Tools.GetAvailableToolsAsync(ct);
+        
+        return _mapper.Map<IEnumerable<ReadToolDto>>(tools);
     }
 
-    public Task<ReadToolDto> CreateToolAsync(CreateToolDto dto, CancellationToken ct = default)
+    public async Task<ReadToolDto> CreateToolAsync(CreateToolDto dto, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            return Result<ReadToolDto>.Fail("Tool name is required");
+        
+        var newTool = _mapper.Map<Tool>(dto);
+        _unitOfWork.Tools.AddTool(newTool, ct);
+        await _unitOfWork.SaveChangesAsync(ct);
+        
+        return _mapper.Map<ReadToolDto>(newTool);
     }
 
     public Task<Result<ReadToolDto>> UpdateToolAsync(UpdateToolDto dto, CancellationToken ct = default)
