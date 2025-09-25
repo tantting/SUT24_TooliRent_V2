@@ -20,8 +20,8 @@ public class UnitOfWork : IUnitOfWork
     public IToolRepository Tools => 
         _tools ??= new ToolRepository(_context);
     
-    public async Task<int> SaveChangesAsync()
+    public async Task<int> SaveChangesAsync(CancellationToken ct)
     {
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(ct);
     }
 }
