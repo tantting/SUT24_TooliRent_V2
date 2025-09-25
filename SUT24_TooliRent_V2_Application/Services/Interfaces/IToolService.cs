@@ -13,7 +13,7 @@ namespace SUT24_TooliRent_V2_Application.Services.Interfaces;
         Task<IEnumerable<ReadToolDto>> GetToolsByCategoryAsync(ToolCategory category, CancellationToken ct = default);  
         Task<IEnumerable<ReadToolDto>> GetToolsByConditionAsync(ToolCondition condition, CancellationToken ct = default);
         Task<IEnumerable<ReadToolDto>> GetAvailableToolsAsync(CancellationToken ct = default);
-        Task<ReadToolDto>  CreateToolAsync(CreateToolDto dto, CancellationToken ct = default);
+        Task <Result<ReadToolDto>>  CreateToolAsync(CreateToolDto dto, CancellationToken ct = default);
         Task<Result<ReadToolDto>> UpdateToolAsync(UpdateToolDto dto, CancellationToken ct = default);
         Task<Result> DeleteToolAsync(int id, CancellationToken ct = default);
         Task<bool> ToolExistsAsync(int id, CancellationToken ct = default);

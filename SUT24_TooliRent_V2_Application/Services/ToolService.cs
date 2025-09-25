@@ -27,7 +27,7 @@ public class ToolService : IToolService
 
     public Task<ReadToolDto?> GetToolByIdAsync(int id, CancellationToken ct = default)
     {
-        
+        throw new NotImplementedException();
     }
 
     // public Task<IEnumerable<ReadToolDto>> GetToolsByNameAsync(string name, CancellationToken ct = default)
@@ -56,7 +56,7 @@ public class ToolService : IToolService
         return _mapper.Map<IEnumerable<ReadToolDto>>(tools);
     }
 
-    public async Task<ReadToolDto> CreateToolAsync(CreateToolDto dto, CancellationToken ct = default)
+    public async Task<Result<ReadToolDto>> CreateToolAsync(CreateToolDto dto, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(dto.Name))
             return Result<ReadToolDto>.Fail("Tool name is required");
@@ -65,7 +65,7 @@ public class ToolService : IToolService
         _unitOfWork.Tools.AddTool(newTool, ct);
         await _unitOfWork.SaveChangesAsync(ct);
         
-        return _mapper.Map<ReadToolDto>(newTool);
+        return Result<ReadToolDto>.Ok(_mapper.Map<ReadToolDto>(newTool));
     }
 
     public Task<Result<ReadToolDto>> UpdateToolAsync(UpdateToolDto dto, CancellationToken ct = default)
