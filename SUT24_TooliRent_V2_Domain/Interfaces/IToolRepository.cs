@@ -11,9 +11,9 @@ public interface IToolRepository
     Task<List<Tool>> GetToolsByCategoryAsync(ToolCategory category, CancellationToken ct = default);  
     Task<List<Tool>> GetToolsByConditionAsync(ToolCondition condition, CancellationToken ct = default);
     Task<List<Tool>> GetAvailableToolsAsync(CancellationToken ct = default);
-    void  AddToolAsync(Tool tool, CancellationToken ct = default);
-    void UpdateToolAsync(Tool tool, CancellationToken ct = default);
-    void DeleteToolAsync(int id, CancellationToken ct = default);
-    void ToolExistsAsync(int id, CancellationToken ct = default);
+    void  AddTool(Tool tool, CancellationToken ct = default);
+    void UpdateTool(Tool tool, CancellationToken ct = default);
+    void DeleteTool(int id, CancellationToken ct = default);
+    void ToolExists(int id, CancellationToken ct = default);
     Task<bool> SaveChangesAsync(CancellationToken ct = default);
 }
