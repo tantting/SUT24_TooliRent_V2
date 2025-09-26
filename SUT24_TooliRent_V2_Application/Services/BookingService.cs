@@ -1,4 +1,6 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using SUT24_TooliRent_V2_Application.DTOs;
 using SUT24_TooliRent_V2_Application.DTOs.Bookings;
 using SUT24_TooliRent_V2_Application.Services.Interfaces;
@@ -19,7 +21,10 @@ public class BookingService : IBookingService
     
     public async Task<IEnumerable<ReadBookingDto>> GetAllBookingsAsync(CancellationToken ct = default)
     {
-        var bookings = await _unitOfWork.Bookings.GetAllBookingsAsync(ct);
-        return _mapper.Map<IEnumerable<ReadBookingDto>>(bookings);
+        var bookings = await _unitOfWork.Bookings.GetAllBookingsQuery(ct)
+            .ProjectTo<ReadBookingDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        return bookings;
     }
 }

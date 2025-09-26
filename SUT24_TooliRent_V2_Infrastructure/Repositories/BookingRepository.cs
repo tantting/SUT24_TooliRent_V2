@@ -19,9 +19,12 @@ public class BookingRepository : IBookingRepository
         _mapper = mapper;
     }
 
-    public async Task<List<Booking>> GetAllBookingsAsync(CancellationToken ct = default)
+    public IQueryable<Booking> GetAllBookingsQuery(CancellationToken ct = default)
     {
-        return await _context.Bookings.ToListAsync(ct);
+        return _context.Bookings
+            .Include(b => b.Tool)
+            .Include(b => b.Member)
+            .AsQueryable();
     }
 
     public Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default)

@@ -19,6 +19,6 @@ public class ReadBookingDto
     
     public bool ToolDemandsCertification { get; set; }
     
-    public BookingStatus Status { get; set; }
+    public string BookingStatus { get; set; }
     
 }

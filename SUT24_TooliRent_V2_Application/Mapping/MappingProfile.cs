@@ -23,7 +23,9 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.ToolCategory, opt 
                 => opt.MapFrom(src => src.Tool.Category.ToString()))
             .ForMember(dest => dest.ToolDemandsCertification, opt 
-                => opt.MapFrom(src => src.Tool.DemandsCertification));
+                => opt.MapFrom(src => src.Tool.DemandsCertification))
+            .ForMember(dest => dest.BookingStatus, opt 
+                => opt.MapFrom(src => src.Status.ToString()));
     }
 
 }
