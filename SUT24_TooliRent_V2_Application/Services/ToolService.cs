@@ -25,9 +25,10 @@ public class ToolService : IToolService
         return _mapper.Map<IEnumerable<ReadToolDto>>(tools);
     }
 
-    public Task<ReadToolDto?> GetToolByIdAsync(int id, CancellationToken ct = default)
+    public async Task<ReadToolDto?> GetToolByIdAsync(int id, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var tool = await  _unitOfWork.Tools.GetToolByIdAsync(id, ct);
+        return tool != null ? _mapper.Map<ReadToolDto>(tool) : null;
     }
 
     // public Task<IEnumerable<ReadToolDto>> GetToolsByNameAsync(string name, CancellationToken ct = default)
