@@ -4,7 +4,7 @@ public interface IUnitOfWork
 {
     IBookingRepository Bookings { get; }
     IToolRepository Tools { get; }
-   Task <int> SaveChangesAsync();   
+   Task <int> SaveChangesAsync(CancellationToken ct);   
    
    
 }

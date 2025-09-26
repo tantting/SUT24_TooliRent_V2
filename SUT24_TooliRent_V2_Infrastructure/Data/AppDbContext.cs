@@ -19,7 +19,54 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        // Tool -> Workshop (many-to-one)
+        modelBuilder.Entity<Tool>()
+            .HasOne(t => t.Workshop)
+            .WithMany(w => w.Tools)
+            .HasForeignKey(t => t.WorkshopId)
+            .OnDelete(DeleteBehavior.Restrict);
 
+        // Tool -> Bookings (one-to-many)
+        modelBuilder.Entity<Tool>()
+            .HasMany(t => t.Bookings)
+            .WithOne(b => b.Tool)
+            .HasForeignKey(b => b.ToolId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Tool -> Certifications (many-to-many standard cert)
+        modelBuilder.Entity<Tool>()
+            .HasMany(t => t.Certifications)
+            .WithMany(c => c.Tools);
+
+        // Tool -> SpecialCertifications (one-to-many)
+        modelBuilder.Entity<Certification>()
+            .HasOne(c => c.Tool)
+            .WithMany(t => t.SpecialCertifications)
+            .HasForeignKey(c => c.ToolId);
+
+        // Certification -> Member (one-to-many)
+        modelBuilder.Entity<Certification>()
+            .HasOne(c => c.Member)
+            .WithMany(m => m.Certifications)
+            .HasForeignKey(c => c.MemberId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Enum-konverteringar
+        modelBuilder.Entity<Tool>()
+            .Property(t => t.Category)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Tool>()
+            .Property(t => t.Condition)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Certification>()
+            .Property(c => c.Type)
+            .HasConversion<string>();
+        
+        //Seed Data
+        
         // Workshops
         modelBuilder.Entity<Workshop>().HasData(
             new Workshop { Id = 1, Name = "Snickeriverkstaden", Description = "För träarbeten", CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
@@ -42,19 +89,62 @@ public class AppDbContext : DbContext
 
         // Certifications
         modelBuilder.Entity<Certification>().HasData(
-            // Alla får General
-            new Certification { Id = 1, ToolId = 1, MemberId = 1, CertificationDate = DateTime.UtcNow.AddYears(-2), ExpirationDate = DateTime.UtcNow.AddYears(1), Type = CertificationType.General, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Certification { Id = 2, ToolId = 1, MemberId = 2, CertificationDate = DateTime.UtcNow.AddYears(-1), ExpirationDate = DateTime.UtcNow.AddYears(1), Type = CertificationType.General, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-
-            // Anna har extra certifikat
-            new Certification { Id = 3, ToolId = 1, MemberId = 1, CertificationDate = DateTime.UtcNow.AddMonths(-6), ExpirationDate = DateTime.UtcNow.AddMonths(6), Type = CertificationType.PowerTools, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Certification { Id = 4, ToolId = 2, MemberId = 1, CertificationDate = DateTime.UtcNow.AddMonths(-3), ExpirationDate = DateTime.UtcNow.AddMonths(9), Type = CertificationType.HeavyMachinery, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow }
+            new Certification 
+            { 
+                Id = 1, 
+                ToolId = null, // standardcertifikat
+                MemberId = 1, 
+                CertificationDate = DateTime.UtcNow.AddYears(-1), 
+                ExpirationDate = DateTime.UtcNow.AddYears(1), 
+                Type = CertificationType.General, 
+                CreatedDate = DateTime.UtcNow, 
+                UpdatedDate = DateTime.UtcNow 
+            }
         );
-
+        modelBuilder.Entity<Certification>().HasData(
+            new Certification 
+            { 
+                Id = 2, 
+                ToolId = 1, // kopplat till ett specifikt verktyg
+                MemberId = 1, 
+                CertificationDate = DateTime.UtcNow.AddMonths(-6), 
+                ExpirationDate = DateTime.UtcNow.AddMonths(6), 
+                Type = CertificationType.PowerTools, 
+                CreatedDate = DateTime.UtcNow, 
+                UpdatedDate = DateTime.UtcNow 
+            }
+        );
+        
         // Bookings
         modelBuilder.Entity<Booking>().HasData(
             new Booking { Id = 1, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(7), MemberId = 1, ToolId = 1, Status = BookingStatus.Reserved, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
             new Booking { Id = 2, StartDate = DateTime.UtcNow.AddDays(1), EndDate = DateTime.UtcNow.AddDays(3), MemberId = 2, ToolId = 2, Status = BookingStatus.Pending, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow }
         );
     }
-}
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.Entity is Tool
+                        || e.Entity is Member
+                        || e.Entity is Workshop
+                        || e.Entity is Booking
+                        || e.Entity is Certification);
+        
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Property("CreatedDate").CurrentValue = DateTime.UtcNow;
+                entry.Property("UpdatedDate").CurrentValue = DateTime.UtcNow;
+            }
+
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Property("UpdatedDate").CurrentValue = DateTime.UtcNow;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+    }

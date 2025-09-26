@@ -7,31 +7,22 @@ public class Certification
 {
     [Key]
     public int Id { get; set; }
-
-    [Required]
-    [Range(1, int.MaxValue, ErrorMessage = "ToolId måste vara större än 0.")]
-    public int ToolId { get; set; }
-
-    [Required]
-    [Range(1, int.MaxValue, ErrorMessage = "MemberId måste vara större än 0.")]
-    public int MemberId { get; set; } 
-
-    [Required]
-    [DataType(DataType.Date)]
-    public DateTime CertificationDate { get; set; } = DateTime.UtcNow;
-
-    [Required]
-    [DataType(DataType.Date)]
-    public DateTime ExpirationDate { get; set; } = DateTime.UtcNow.AddYears(1);
-
-    [Required]
     public CertificationType Type { get; set; }
+    
+    // Many-to-many standardcertifikat
+    public ICollection<Tool> Tools { get; set; } = new List<Tool>();
 
-    // Navigation properties
-    [Required]
-    public Tool Tool { get; set; }
-    [Required]
+    // Optional: specialcertifikat kopplat till ett specifikt verktyg
+    public int? ToolId { get; set; }
+    public Tool? Tool { get; set; }
+    
+    public int MemberId { get; set; } 
+    
     public Member Member { get; set; }
+    
+    public DateTime CertificationDate { get; set; } = DateTime.UtcNow;
+    public DateTime ExpirationDate { get; set; } = DateTime.UtcNow.AddYears(1);
+    
 
     // Auditering
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

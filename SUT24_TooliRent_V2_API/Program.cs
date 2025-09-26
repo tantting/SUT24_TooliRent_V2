@@ -1,5 +1,10 @@
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using SUT24_TooliRent_V2_Application.Mapping;
+using SUT24_TooliRent_V2_Application.Services;
+using SUT24_TooliRent_V2_Application.Services.Interfaces;
+using SUT24_TooliRent_V2_Domain.Interfaces;
 
 namespace SUT24_TooliRent_V2;
 
@@ -11,7 +16,15 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
+
+        builder.Services.AddScoped<IToolService, ToolService>();
+        builder.Services.AddScoped<IToolRepository, ToolRepository>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
+        
+        builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
+
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
