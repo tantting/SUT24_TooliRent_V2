@@ -1,6 +1,8 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using SUT24_TooliRent_V2_Application.DTOs.Bookings;
 using SUT24_TooliRent_V2_Domain.Entities;
 using SUT24_TooliRent_V2_Domain.Interfaces;
 
