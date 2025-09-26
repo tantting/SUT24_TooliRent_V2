@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Infrastructure.Auth;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -55,6 +56,7 @@ public class Program
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    RoleClaimType = ClaimTypes.Role,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
@@ -62,6 +64,14 @@ public class Program
                     ValidIssuer = jwt["Issuer"],
                     ValidAudience = jwt["Audience"],
                     IssuerSigningKey = key
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = ctx =>
+                    {
+                        Console.WriteLine("Auth failed: " + ctx.Exception.Message);
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
@@ -84,7 +94,7 @@ public class Program
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Skriv 'Bearer' [mellanslag] och sedan din JWT-token.\n\nExempel: \"Bearer eyJhbGciOi...\""
+                Description = "Klistra in din JWT-token här"
             });
 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -120,77 +130,55 @@ public class Program
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "TooliRent API v1");
-                options.RoutePrefix = string.Empty; // gör så att Swagger öppnas direkt på root (https://localhost:5226)
             });
         }
         
-        // DEBUGGING: Visa vad som händer
-        Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
-        Console.WriteLine($"IsDevelopment: {app.Environment.IsDevelopment()}");
         
-        // Configure the HTTP request pipeline (Middleware) - VIKTIG ORDNING!
-        if (app.Environment.IsDevelopment())
-        {
-            Console.WriteLine("Adding Swagger middleware...");
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "TooliRent API v1");
-                options.RoutePrefix = string.Empty; // gör så att Swagger öppnas direkt på root
-            });
-            Console.WriteLine("Swagger middleware added successfully");
-        }
-        else
-        {
-            Console.WriteLine("NOT in Development mode - Swagger will not be available");
-        }
+        //app.UseHttpsRedirection();
         
-        
-        app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         
         app.MapControllers();
         
-        // // Seed roles and users
-        // using (var scope = app.Services.CreateScope())
-        // {
-        //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        //
-        //     string[] roles = { "Admin", "Member" };
-        //     foreach (var role in roles)
-        //     {
-        //         if (!await roleManager.RoleExistsAsync(role))
-        //         {
-        //             await roleManager.CreateAsync(new IdentityRole(role));
-        //         }
-        //     }
-        //
-        //     // Admin user
-        //     var adminEmail = "admin@example.com";
-        //     var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        //     if (adminUser == null)
-        //     {
-        //         adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-        //         await userManager.CreateAsync(adminUser, "Admin123!");
-        //         await userManager.AddToRoleAsync(adminUser, "Admin");
-        //     }
-        //
-        //     // Member users
-        //     var memberEmails = new[] { "member1@example.com", "member2@example.com" };
-        //     foreach (var email in memberEmails)
-        //     {
-        //         var member = await userManager.FindByEmailAsync(email);
-        //         if (member == null)
-        //         {
-        //             member = new IdentityUser { UserName = email, Email = email };
-        //             await userManager.CreateAsync(member, "Member123!");
-        //             await userManager.AddToRoleAsync(member, "Member");
-        //         }
-        //     }
-        // }
-        // Configure the HTTP request pipeline (Middleware)
+        // Seed roles and users
+        using (var scope = app.Services.CreateScope())
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        
+            string[] roles = { "Admin", "Member" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+        
+            // Admin user
+            var adminEmail = "admin@example.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
+            {
+                adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+                await userManager.CreateAsync(adminUser, "Admin123!");
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+        
+            // Member users
+            var memberEmails = new[] { "member1@example.com", "member2@example.com" };
+            foreach (var email in memberEmails)
+            {
+                var member = await userManager.FindByEmailAsync(email);
+                if (member == null)
+                {
+                    member = new IdentityUser { UserName = email, Email = email };
+                    await userManager.CreateAsync(member, "Member123!");
+                    await userManager.AddToRoleAsync(member, "Member");
+                }
+            }
+        }
 
         app.Run();
     }
