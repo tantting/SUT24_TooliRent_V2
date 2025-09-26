@@ -1,4 +1,8 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using SUT24_TooliRent_V2_Application.DTOs.Bookings;
 using SUT24_TooliRent_V2_Domain.Entities;
 using SUT24_TooliRent_V2_Domain.Interfaces;
 
@@ -7,15 +11,20 @@ namespace Infrastructure.Repositories;
 public class BookingRepository : IBookingRepository
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public BookingRepository(AppDbContext context)
+    public BookingRepository(AppDbContext context, IMapper mapper)      
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public Task<List<Booking>> GetAllBookingsAsync(CancellationToken ct = default)
+    public IQueryable<Booking> GetAllBookingsQuery(CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return _context.Bookings
+            .Include(b => b.Tool)
+            .Include(b => b.Member)
+            .AsQueryable();
     }
 
     public Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default)

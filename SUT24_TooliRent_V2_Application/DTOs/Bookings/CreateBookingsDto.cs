@@ -4,7 +4,7 @@ using SUT24_TooliRent_V2_Domain.Enums;
 
 namespace SUT24_TooliRent_V2_Application.DTOs.Bookings;
 
-public class CreateBookingsDto
+public record CreateBookingsDto
 {
     [Key]
     public int Id { get; set; }

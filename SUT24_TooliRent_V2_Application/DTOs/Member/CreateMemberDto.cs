@@ -3,7 +3,7 @@ using SUT24_TooliRent_V2_Domain.Entities;
 
 namespace SUT24_TooliRent_V2_Application.DTOs.Member;
 
-public class CreateMemberDto
+public record CreateMemberDto
 {
     [Key]
     public int Id { get; set; }

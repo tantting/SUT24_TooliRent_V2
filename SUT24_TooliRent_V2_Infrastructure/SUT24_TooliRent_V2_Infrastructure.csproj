@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="15.0.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.20" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.20">
         <PrivateAssets>all</PrivateAssets>
@@ -21,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SUT24_TooliRent_V2_Application\SUT24_TooliRent_V2_Application.csproj" />
       <ProjectReference Include="..\SUT24_TooliRent_V2_Domain\SUT24_TooliRent_V2_Domain.csproj" />
     </ItemGroup>
 
