@@ -20,11 +20,12 @@ public class Tool
 
     public ToolCondition Condition { get; set; }
     
-    public ToolCategory Category { get; set; }
+    public int ToolCategoryId { get; set; }
     
     // Navigation properties
     public Workshop Workshop { get; set; }
-    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public ToolCategory ToolCategory { get; set; }
+    public ICollection<BookingTool> BookingTools { get; set; } = new List<BookingTool>();
     
     // Nav for Standard certificat
     public ICollection<Certification> Certifications { get; set; } = new List<Certification>();

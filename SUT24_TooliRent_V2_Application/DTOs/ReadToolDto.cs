@@ -7,10 +7,8 @@ public record ReadToolDto
     public int Id { get; init; }
     public string Name { get; init; }
     public string Description { get; init; }
-    public decimal RentalPricePerDay { get; init; }
     public bool IsAvailable { get; init; }
-    public ToolCategory Category { get; init; }
-    public string CategoryName  => Category.ToString();
+    public string ToolCategoryName { get; init; }
     public ToolCondition Condition { get; init; }  
     public string ConditionName  => Condition.ToString();
     public int WorkshopId { get; init; }

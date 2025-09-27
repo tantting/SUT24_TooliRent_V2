@@ -10,12 +10,11 @@ public class Booking
     public DateTime StartDate { get; set; } = DateTime.UtcNow;
     public DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(30);
     public int MemberId { get; set; }
-    public int ToolId { get; set; }
     public BookingStatus Status { get; set; }
 
     // Navigation properties
     public Member Member { get; set; }
-    public Tool Tool { get; set; }
+    public ICollection<BookingTool> BookingTools { get; set; } = new List<BookingTool>();
 
     // Auditering
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

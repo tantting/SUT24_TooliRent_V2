@@ -8,7 +8,7 @@ public interface IToolRepository
     Task<List<Tool>> GetAllToolsAsync(CancellationToken ct = default);
     Task<Tool?> GetToolByIdAsync(int id, CancellationToken ct = default);
     Task<List<Tool>> GetToolsByNameAsync(string name, CancellationToken ct = default);
-    Task<List<Tool>> GetToolsByCategoryAsync(ToolCategory category, CancellationToken ct = default);  
+    Task<List<Tool>> GetToolsByCategoryAsync(int categoryId, CancellationToken ct = default);  
     Task<List<Tool>> GetToolsByConditionAsync(ToolCondition condition, CancellationToken ct = default);
     Task<List<Tool>> GetAvailableToolsAsync(CancellationToken ct = default);
     void  AddTool(Tool tool, CancellationToken ct = default);
