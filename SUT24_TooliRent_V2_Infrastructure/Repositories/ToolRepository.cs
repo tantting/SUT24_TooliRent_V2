@@ -18,6 +18,7 @@ public class ToolRepository : IToolRepository
     {
         return await _context.Tools
             .AsNoTracking()
+            .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
             .ToListAsync();
     }
@@ -26,6 +27,7 @@ public class ToolRepository : IToolRepository
     {
         return await _context.Tools
             .AsNoTracking()
+            .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
     }
@@ -34,17 +36,19 @@ public class ToolRepository : IToolRepository
     {
         return await _context.Tools
             .AsNoTracking()
+            .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
             .Where(t => t.Name.Contains(name))
             .ToListAsync(ct);
     }
 
-    public async Task<List<Tool>> GetToolsByCategoryAsync(ToolCategory category, CancellationToken ct = default)
+    public async Task<List<Tool>> GetToolsByCategoryAsync(int categoryId, CancellationToken ct = default)
     {
         return await _context.Tools
             .AsNoTracking()
+            .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
-            .Where(t => t.Category == category)
+            .Where(t => t.ToolCategoryId == categoryId)
             .ToListAsync(ct);   
     }
 
@@ -52,6 +56,7 @@ public class ToolRepository : IToolRepository
     {
         return await _context.Tools
             .AsNoTracking()
+            .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
             .Where(t => t.Condition == condition)
             .ToListAsync(ct);
@@ -61,6 +66,7 @@ public class ToolRepository : IToolRepository
     {
         return await _context.Tools
             .AsNoTracking()
+            .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
             .Where(t => t.IsAvailable)
             .ToListAsync(ct);

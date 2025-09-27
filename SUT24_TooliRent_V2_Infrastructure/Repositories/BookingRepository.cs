@@ -13,7 +13,7 @@ public class BookingRepository : IBookingRepository
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
 
-    public BookingRepository(AppDbContext context, IMapper mapper)      
+    public BookingRepository(AppDbContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
@@ -22,12 +22,16 @@ public class BookingRepository : IBookingRepository
     public IQueryable<Booking> GetAllBookingsQuery(CancellationToken ct = default)
     {
         return _context.Bookings
-            .Include(b => b.Tool)
-            .Include(b => b.Member)
-            .AsQueryable();
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.Workshop)
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.ToolCategory)
+            .Include(b => b.Member);
     }
 
-    public Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default)
+public Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default)
     {
         throw new NotImplementedException();
     }

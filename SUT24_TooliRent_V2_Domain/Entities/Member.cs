@@ -12,6 +12,7 @@ public class Member
     public string PhoneNumber { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public DateTime MembershipDate { get; set; } = DateTime.UtcNow;
+    public DateTime MembershipValidUntil { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = default;
     
     // Navigation properties

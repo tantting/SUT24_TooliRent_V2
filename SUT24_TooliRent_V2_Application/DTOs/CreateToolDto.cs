@@ -16,7 +16,7 @@ public record CreateToolDto
     public int WorkshopId { get; set; }
 
     [Required]
-    public ToolCategory Category { get; set; }
+    public int ToolCategoryId { get; set; }
 
     public bool IsAvailable { get; set; } = true;
     public bool DemandsCertification { get; set; }

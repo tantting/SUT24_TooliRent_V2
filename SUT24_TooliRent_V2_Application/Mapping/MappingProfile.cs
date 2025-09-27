@@ -14,18 +14,19 @@ public class MappingProfile : Profile
         CreateMap<UpdateToolDto, Tool>();
 
         // Entity to DTO mappings
-        CreateMap<Tool, ReadToolDto>();
-        CreateMap<Booking, ReadBookingDto>()
-            .ForMember(dest => dest.MemberName, opt 
-                => opt.MapFrom(src => src.Member.Name))
-            .ForMember(dest => dest.ToolName, opt 
-                => opt.MapFrom(src => src.Tool.Name))
-            .ForMember(dest => dest.ToolCategory, opt 
-                => opt.MapFrom(src => src.Tool.Category.ToString()))
-            .ForMember(dest => dest.ToolDemandsCertification, opt 
-                => opt.MapFrom(src => src.Tool.DemandsCertification))
-            .ForMember(dest => dest.BookingStatus, opt 
-                => opt.MapFrom(src => src.Status.ToString()));
+        CreateMap<Tool, ReadToolDto>()
+            .ForMember(dest => dest.ToolCategoryName, opt 
+                => opt.MapFrom(src => src.ToolCategory.Name));
+        
+        CreateMap<BookingTool, ReadBookingToolDto>()
+            .ForMember(dest => dest.ToolName,
+                opt => opt.MapFrom(src => src.Tool.Name))
+            .ForMember(dest => dest.ToolCategory,
+                opt => opt.MapFrom(src => src.Tool.ToolCategory.Name))
+            .ForMember(dest => dest.ToolDemandsCertification,
+                opt => opt.MapFrom(src => src.Tool.DemandsCertification))
+            .ForMember(dest => dest.ReturnStatus,
+                opt => opt.MapFrom(src => src.ReturnStatus.ToString()));              
     }
 
 }

@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Member> Members { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Certification> Certifications { get; set; }
+    public DbSet<ToolCategory> ToolCategories { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,13 +27,22 @@ public class AppDbContext : DbContext
             .WithMany(w => w.Tools)
             .HasForeignKey(t => t.WorkshopId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // Tool -> Bookings (one-to-many)
-        modelBuilder.Entity<Tool>()
-            .HasMany(t => t.Bookings)
-            .WithOne(b => b.Tool)
-            .HasForeignKey(b => b.ToolId)
-            .OnDelete(DeleteBehavior.Cascade);
+        
+        // BookingTool -> Booking (many-to-one)
+        modelBuilder.Entity<BookingTool>()
+            .HasOne(bt => bt.Booking)
+            .WithMany(b => b.BookingTools)
+            .HasForeignKey(bt => bt.BookingId);
+        
+        // BookingTool -> Tool (many-to-one)
+        modelBuilder.Entity<BookingTool>()
+            .HasOne(bt => bt.Tool)
+            .WithMany(t => t.BookingTools)
+            .HasForeignKey(bt => bt.ToolId);
+        
+        // Composite key
+        modelBuilder.Entity<BookingTool>()
+            .HasKey(bt => new { bt.BookingId, bt.ToolId });
 
         // Tool -> Certifications (many-to-many standard cert)
         modelBuilder.Entity<Tool>()
@@ -52,10 +62,12 @@ public class AppDbContext : DbContext
             .HasForeignKey(c => c.MemberId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Enum-konverteringar
+        // Category  -> Tool (one-to-many)
         modelBuilder.Entity<Tool>()
-            .Property(t => t.Category)
-            .HasConversion<string>();
+            .HasOne(t => t.ToolCategory)
+            .WithMany(tc => tc.Tools)
+            .HasForeignKey(t => t.ToolCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Tool>()
             .Property(t => t.Condition)
@@ -67,59 +79,198 @@ public class AppDbContext : DbContext
         
         //Seed Data
         
-        // Workshops
+        // --- ToolCategory ---
+        modelBuilder.Entity<ToolCategory>().HasData(
+            new ToolCategory
+            {
+                Id = 1,
+                Name = "Handverktyg",
+                Description = "Skruvmejslar, hammare, tänger",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new ToolCategory
+            {
+                Id = 2,
+                Name = "Elverktyg",
+                Description = "Borrmaskiner, cirkelsågar",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new ToolCategory
+            {
+                Id = 3,
+                Name = "Maskiner",
+                Description = "Tyngre utrustning som CNC, svets",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
+        );
+
+// --- Workshop ---
         modelBuilder.Entity<Workshop>().HasData(
-            new Workshop { Id = 1, Name = "Snickeriverkstaden", Description = "För träarbeten", CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Workshop { Id = 2, Name = "Metallverkstaden", Description = "För metallarbete och svetsning", CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow }
+            new Workshop
+            {
+                Id = 1,
+                Name = "Träverkstad",
+                Description = "För träarbete",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new Workshop
+            {
+                Id = 2,
+                Name = "Metallverkstad",
+                Description = "För metallbearbetning",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
         );
 
-        // Members
-        modelBuilder.Entity<Member>().HasData(
-            new Member { Id = 1, PersonalNumber = "8501011234", Name = "Anna Andersson", Email = "anna@example.com", PhoneNumber = "0701234567", Address = "Storgatan 1", MembershipDate = DateTime.UtcNow.AddYears(-2), IsActive = true },
-            new Member { Id = 2, PersonalNumber = "9202025678", Name = "Björn Berg", Email = "bjorn@example.com", PhoneNumber = "0709876543", Address = "Lillgatan 5", MembershipDate = DateTime.UtcNow.AddYears(-1), IsActive = true }
-        );
-
-        // Tools med Category
+// --- Tool ---
         modelBuilder.Entity<Tool>().HasData(
-            new Tool { Id = 1, Name = "Borrmaskin", Description = "En kraftfull borrmaskin", IsAvailable = true, WorkshopId = 1, DemandsCertification = true, Condition = ToolCondition.Good, Category = ToolCategory.PowerTools, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Tool { Id = 2, Name = "Svets", Description = "MIG-svets för metall", IsAvailable = true, WorkshopId = 2, DemandsCertification = true, Condition = ToolCondition.Good, Category = ToolCategory.HeavyMachinery, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Tool { Id = 3, Name = "Hammare", Description = "En klassisk hammare", IsAvailable = true, WorkshopId = 1, DemandsCertification = false, Condition = ToolCondition.Good, Category = ToolCategory.HandTools, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Tool { Id = 4, Name = "Laseravståndsmätare", Description = "För precis mätning", IsAvailable = true, WorkshopId = 1, DemandsCertification = false, Condition = ToolCondition.Good, Category = ToolCategory.MeasuringTools, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow }
+            new Tool
+            {
+                Id = 1,
+                Name = "Hammare",
+                Description = "Standard hammare",
+                IsAvailable = true,
+                WorkshopId = 1,
+                ToolCategoryId = 1,
+                DemandsCertification = false,
+                Condition = ToolCondition.Good,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new Tool
+            {
+                Id = 2,
+                Name = "Borrmaskin",
+                Description = "Elborrmaskin 500W",
+                IsAvailable = true,
+                WorkshopId = 1,
+                ToolCategoryId = 2,
+                DemandsCertification = true,
+                Condition = ToolCondition.Good,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new Tool
+            {
+                Id = 3,
+                Name = "Svets",
+                Description = "Industrisvets",
+                IsAvailable = false,
+                WorkshopId = 2,
+                ToolCategoryId = 3,
+                DemandsCertification = true,
+                Condition = ToolCondition.NeedsRepair,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
         );
 
-        // Certifications
-        modelBuilder.Entity<Certification>().HasData(
-            new Certification 
-            { 
-                Id = 1, 
-                ToolId = null, // standardcertifikat
-                MemberId = 1, 
-                CertificationDate = DateTime.UtcNow.AddYears(-1), 
-                ExpirationDate = DateTime.UtcNow.AddYears(1), 
-                Type = CertificationType.General, 
-                CreatedDate = DateTime.UtcNow, 
-                UpdatedDate = DateTime.UtcNow 
+// --- Member ---
+        modelBuilder.Entity<Member>().HasData(
+            new Member
+            {
+                Id = 1,
+                Name = "Anna Andersson",
+                PersonalNumber = "19800101-1234",
+                Email = "anna@example.com",
+                PhoneNumber = "0701234567",
+                Address = "Storgatan 1",
+                MembershipDate = DateTime.UtcNow,
+                MembershipValidUntil = DateTime.UtcNow.AddYears(1),
+                IsActive = true
+            },
+            new Member
+            {
+                Id = 2,
+                Name = "Bertil Bengtsson",
+                PersonalNumber = "19900202-5678",
+                Email = "bertil@example.com",
+                PhoneNumber = "0709876543",
+                Address = "Lillgatan 2",
+                MembershipDate = DateTime.UtcNow,
+                MembershipValidUntil = DateTime.UtcNow.AddYears(1),
+                IsActive = true
             }
         );
-        modelBuilder.Entity<Certification>().HasData(
-            new Certification 
-            { 
-                Id = 2, 
-                ToolId = 1, // kopplat till ett specifikt verktyg
-                MemberId = 1, 
-                CertificationDate = DateTime.UtcNow.AddMonths(-6), 
-                ExpirationDate = DateTime.UtcNow.AddMonths(6), 
-                Type = CertificationType.PowerTools, 
-                CreatedDate = DateTime.UtcNow, 
-                UpdatedDate = DateTime.UtcNow 
-            }
-        );
-        
-        // Bookings
+
+// --- Booking ---
         modelBuilder.Entity<Booking>().HasData(
-            new Booking { Id = 1, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(7), MemberId = 1, ToolId = 1, Status = BookingStatus.Reserved, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow },
-            new Booking { Id = 2, StartDate = DateTime.UtcNow.AddDays(1), EndDate = DateTime.UtcNow.AddDays(3), MemberId = 2, ToolId = 2, Status = BookingStatus.Pending, CreatedDate = DateTime.UtcNow, UpdatedDate = DateTime.UtcNow }
+            new Booking
+            {
+                Id = 1,
+                MemberId = 1,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(7),
+                Status = BookingStatus.Reserved,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
         );
+
+// --- BookingTool ---
+        modelBuilder.Entity<BookingTool>().HasData(
+            new BookingTool
+            {
+                BookingId = 1,
+                ToolId = 1,
+                ReturnStatus = ReturnStatus.NotReturned,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new BookingTool
+            {
+                BookingId = 1,
+                ToolId = 2,
+                ReturnStatus = ReturnStatus.NotReturned,
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
+        );
+
+// --- Standardcertifikat (gäller flera verktyg) ---
+        modelBuilder.Entity<Certification>().HasData(
+            new Certification
+            {
+                Id = 1,
+                Type = CertificationType.General,
+                MemberId = 1,
+                CertificationDate = DateTime.UtcNow,
+                ExpirationDate = DateTime.UtcNow.AddYears(1),
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            },
+            new Certification
+            {
+                Id = 2,
+                Type = CertificationType.PowerTools,
+                MemberId = 2,
+                CertificationDate = DateTime.UtcNow,
+                ExpirationDate = DateTime.UtcNow.AddYears(1),
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
+        );
+
+// --- Specialcertifikat (kopplat till ett specifikt verktyg) ---
+        modelBuilder.Entity<Certification>().HasData(
+            new Certification
+            {
+                Id = 3,
+                Type = CertificationType.WorkshopSpecific,
+                ToolId = 2,
+                MemberId = 1,
+                CertificationDate = DateTime.UtcNow,
+                ExpirationDate = DateTime.UtcNow.AddYears(1),
+                CreatedDate = DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow
+            }
+        );
+
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -147,4 +298,4 @@ public class AppDbContext : DbContext
 
         return await base.SaveChangesAsync(cancellationToken);
     }
-    }
+}

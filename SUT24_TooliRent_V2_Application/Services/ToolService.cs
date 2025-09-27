@@ -36,9 +36,9 @@ public class ToolService : IToolService
     //     throw new NotImplementedException();
     // }
 
-    public async Task<IEnumerable<ReadToolDto>> GetToolsByCategoryAsync(ToolCategory category, CancellationToken ct = default)
+    public async Task<IEnumerable<ReadToolDto>> GetToolsByCategoryAsync(int categoryId, CancellationToken ct = default)
     {
-        var tools = await _unitOfWork.Tools.GetToolsByCategoryAsync(category, ct);
+        var tools = await _unitOfWork.Tools.GetToolsByCategoryAsync(categoryId, ct);
 
         return _mapper.Map<IEnumerable<ReadToolDto>>(tools); 
     }
