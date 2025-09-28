@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using SUT24_TooliRent_V2_Domain.Entities;
 
-namespace SUT24_TooliRent_V2_Application.DTOs.Member;
+namespace SUT24_TooliRent_V2_Application.DTOs.Member.DTOs;
 
 public record CreateMemberDto
 {
