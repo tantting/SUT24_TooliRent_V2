@@ -1,6 +1,6 @@
 using AutoMapper;
 using SUT24_TooliRent_V2_Application.Common;
-using SUT24_TooliRent_V2_Application.DTOs;
+using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
 using SUT24_TooliRent_V2_Application.Services.Interfaces;
 using SUT24_TooliRent_V2_Domain.Entities;
 using SUT24_TooliRent_V2_Domain.Enums;

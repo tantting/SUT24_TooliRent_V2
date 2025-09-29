@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SUT24_TooliRent_V2_Domain.Entities;
 
-namespace SUT24_TooliRent_V2_Application.DTOs.Workshop;
+namespace SUT24_TooliRent_V2_Application.DTOs.WorkshopDTOs;
 
 public class CreateWorkshopDto
 {

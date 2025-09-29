@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using SUT24_TooliRent_V2_Domain.Enums;
 
-namespace SUT24_TooliRent_V2_Application.DTOs.Bookings;
+namespace SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
 
 public class ReadBookingDto
 {
