@@ -31,6 +31,9 @@ public class Program
         builder.Services.AddScoped<IToolRepository, ToolRepository>();
         builder.Services.AddScoped<IBookingService, BookingService>();
         builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+        builder.Services.AddScoped<IBookingToolService, BookingToolService>();
+        builder.Services.AddScoped<IBookingToolRepository, BookingToolRepository>();
+        
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
