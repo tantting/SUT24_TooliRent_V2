@@ -17,6 +17,8 @@ public class BookingToolRepository : IBookingToolRepository
     public async Task<BookingTool?> GetBookingToolAsync(int bookingId, int toolId,  CancellationToken ct = default)
     {
         return await _context.BookingTools
+            .Include(bt => bt.Booking)           
+            .ThenInclude(b => b.BookingTools)   
             .FirstOrDefaultAsync(bt => bt.BookingId == bookingId && bt.ToolId == toolId, ct);
     }
 
