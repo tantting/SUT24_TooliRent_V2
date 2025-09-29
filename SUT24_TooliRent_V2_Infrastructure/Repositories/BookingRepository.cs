@@ -19,7 +19,7 @@ public class BookingRepository : IBookingRepository
         _mapper = mapper;
     }
 
-    public IQueryable<Booking> GetAllBookingsQuery(CancellationToken ct = default)
+    public IQueryable<Booking> GetAllBookingsQuery()
     {
         return _context.Bookings
             .Include(b => b.BookingTools)
@@ -31,9 +31,17 @@ public class BookingRepository : IBookingRepository
             .Include(b => b.Member);
     }
 
-public Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default)
+public IQueryable<Booking> GetBookingByIdQuery(int id)
     {
-        throw new NotImplementedException();
+        return _context.Bookings
+            .Where(b => b.Id == id)
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.Workshop)
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.ToolCategory)
+            .Include(b => b.Member);
     }
 
     public Task<List<Booking>> GetBookingsByToolIdAsync(int toolId, CancellationToken ct = default)
@@ -46,24 +54,24 @@ public Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default
         throw new NotImplementedException();
     }
 
-    public void AddBookingAsync(Booking booking, CancellationToken ct = default)
+    public void AddBooking(Booking booking, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        _context.Bookings.Add(booking);
     }
 
-    public void UpdateBookingAsync(Booking booking, CancellationToken ct = default)
+    public void UpdateBooking(Booking booking, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        _context.Bookings.Update(booking);
     }
 
-    public void DeleteBookingAsync(int id, CancellationToken ct = default)
+    public void DeleteBooking(int id, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        _context.Bookings.Remove(new Booking { Id = id });
     }
 
-    public void BookingExistsAsync(int id, CancellationToken ct = default)
+    public void BookingExists(int id, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        _context.Bookings.Any(b => b.Id == id);
     }
 
     public Task<bool> SaveChangesAsync(CancellationToken ct = default)

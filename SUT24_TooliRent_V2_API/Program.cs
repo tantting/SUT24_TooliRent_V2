@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Auth;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -11,6 +13,7 @@ using SUT24_TooliRent_V2_Application.Services;
 using SUT24_TooliRent_V2_Application.Services.Interfaces;
 using SUT24_TooliRent_V2_Domain.Interfaces;
 using Microsoft.OpenApi.Models;
+using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
 using SUT24_TooliRent_V2.Swagger;
 
 namespace SUT24_TooliRent_V2;
@@ -31,6 +34,11 @@ public class Program
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
+        
+        //Fluent Validation
+        builder.Services.AddValidatorsFromAssemblyContaining<CreateBookingRequestDtoValidation>();
+        builder.Services.AddFluentValidationAutoValidation();
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         
         //Microsoft Identity
         // Byt ut AddIdentityCore mot AddIdentity
