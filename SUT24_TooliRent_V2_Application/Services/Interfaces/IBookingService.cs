@@ -14,6 +14,6 @@ public interface IBookingService
     // Task<IEnumerable<ReadBookingDto>> GetBookingsByToolIdAsync(int toolId, CancellationToken ct = default);
     Task <Result<int>> CreateBookingAsync(CreateBookingRequestDto dto, CancellationToken ct = default);
     // Task <Result<ReadBookingDto>>  UpdateBookingAsync(UpdateBookingDto dto, CancellationToken ct = default);
-    // Task <Result<ReadBookingDto>>  DeleteBookingAsync(int id, CancellationToken ct = default);
+    Task <Result<ReadBookingDto>>  DeleteBookingAsync(int id, CancellationToken ct = default);
     // Task<bool> BookingExistsAsync(int id, CancellationToken ct = default);
 }

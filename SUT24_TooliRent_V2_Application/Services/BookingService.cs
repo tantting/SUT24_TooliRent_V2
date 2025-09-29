@@ -66,4 +66,18 @@ public class BookingService : IBookingService
             return Result<int>.Fail(ex.Message);
         }
     }
+
+    public Task<Result<ReadBookingDto>> DeleteBookingAsync(int id, CancellationToken ct = default)
+    {
+        try
+        {
+            _unitOfWork.Bookings.DeleteBooking(id, ct);
+            _unitOfWork.SaveChangesAsync(ct).Wait(ct);
+            return Task.FromResult(Result<ReadBookingDto>.Ok(null!));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult(Result<ReadBookingDto>.Fail(ex.Message));
+        }
+    }
 }
