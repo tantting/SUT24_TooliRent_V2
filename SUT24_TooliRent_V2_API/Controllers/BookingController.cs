@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
@@ -5,6 +6,7 @@ using SUT24_TooliRent_V2_Application.Services.Interfaces;
 
 namespace SUT24_TooliRent_V2.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookingController : ControllerBase
@@ -18,9 +20,15 @@ namespace SUT24_TooliRent_V2.Controllers
         
         /// Get all bookings
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(typeof(IEnumerable<ReadBookingDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookings()
         {
+            foreach (var item in User.Claims)
+            {
+                Console.WriteLine(item.Subject);
+            }
+            
             var bookings = await _bookingService.GetAllBookingsAsync();
             return Ok(bookings);
         }
@@ -63,8 +71,6 @@ namespace SUT24_TooliRent_V2.Controllers
                 result.Data
             );
         }
-        
-        //Delete booking
         // Delete a booking
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
