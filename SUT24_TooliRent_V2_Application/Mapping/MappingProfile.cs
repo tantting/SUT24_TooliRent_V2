@@ -18,7 +18,7 @@ public class MappingProfile : Profile
                 => opt.MapFrom(src => BookingStatus.Pending))
                 .ForMember(dest => dest.BookingTools, opt 
                 => opt.MapFrom(src => 
-                    src.ToolIds.Select(id => new BookingTool { ToolId = id, ReturnStatus = ReturnStatus.NotReturned })));
+                    src.ToolIds.Select(id => new BookingTool { ToolId = id, ReturnStatus = ReturnStatus.NotFetched })));
 
         // Entity to DTO mappings
         CreateMap<Tool, ReadToolDto>()
@@ -30,6 +30,8 @@ public class MappingProfile : Profile
                 opt.MapFrom(scr =>scr.Workshop.Name));;
 
         CreateMap<BookingTool, ReadBookingToolDto>()
+            .ForMember(dest => dest.Toold, opt 
+                => opt.MapFrom(src => src.Tool.Id))
             .ForMember(dest => dest.ToolName,
                 opt => opt.MapFrom(src => src.Tool.Name))
             .ForMember(dest => dest.ToolCategory,

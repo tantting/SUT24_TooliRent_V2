@@ -11,12 +11,10 @@ namespace Infrastructure.Repositories;
 public class BookingRepository : IBookingRepository
 {
     private readonly AppDbContext _context;
-    private readonly IMapper _mapper;
 
-    public BookingRepository(AppDbContext context, IMapper mapper)
+    public BookingRepository(AppDbContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
 
     public IQueryable<Booking> GetAllBookingsQuery()
@@ -74,8 +72,8 @@ public IQueryable<Booking> GetBookingByIdQuery(int id)
         _context.Bookings.Any(b => b.Id == id);
     }
 
-    public Task<bool> SaveChangesAsync(CancellationToken ct = default)
+    public async Task<bool> SaveChangesAsync(CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return await _context.SaveChangesAsync(ct).ContinueWith(t => t.Result > 0, ct);
     }
 }

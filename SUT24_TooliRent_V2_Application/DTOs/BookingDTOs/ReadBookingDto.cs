@@ -12,5 +12,6 @@ public class ReadBookingDto
     public DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(30);
     public string MemberName { get; set; }
     public string BookingStatus { get; set; }
+    public bool IsOverdue { get; set; }
     public List<ReadBookingToolDto> Tools { get; set; } = new();
 }

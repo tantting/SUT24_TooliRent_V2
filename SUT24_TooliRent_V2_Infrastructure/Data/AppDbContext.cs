@@ -16,7 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Certification> Certifications { get; set; }
     public DbSet<ToolCategory> ToolCategories { get; set; }
-    
+    public DbSet<BookingTool> BookingTools { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -218,7 +219,7 @@ public class AppDbContext : DbContext
             {
                 BookingId = 1,
                 ToolId = 1,
-                ReturnStatus = ReturnStatus.NotReturned,
+                ReturnStatus = ReturnStatus.NotFetched,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow
             },
@@ -226,7 +227,7 @@ public class AppDbContext : DbContext
             {
                 BookingId = 1,
                 ToolId = 2,
-                ReturnStatus = ReturnStatus.NotReturned,
+                ReturnStatus = ReturnStatus.NotFetched,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow
             }

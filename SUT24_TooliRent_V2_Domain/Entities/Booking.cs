@@ -11,6 +11,7 @@ public class Booking
     public DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(30);
     public int MemberId { get; set; }
     public BookingStatus Status { get; set; }
+    public bool IsOverdue => Status == BookingStatus.Active && DateTime.UtcNow > EndDate;
 
     // Navigation properties
     public Member Member { get; set; }
