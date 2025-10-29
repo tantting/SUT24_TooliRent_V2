@@ -23,6 +23,12 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        //Database
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddDbContext<AuthDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         // Add services to the container.
         builder.Services.AddControllers();
@@ -44,7 +50,6 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         
         //Microsoft Identity
-        // Byt ut AddIdentityCore mot AddIdentity
         builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -54,6 +59,8 @@ public class Program
                 options.Password.RequireLowercase = false;
                 options.Password.RequireDigit = false;
             })
+            .AddRoles<IdentityRole>()
+            .AddSignInManager()
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
         
@@ -62,7 +69,11 @@ public class Program
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwt["Key"]!));
         
         builder .Services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -125,12 +136,6 @@ public class Program
             // ----------------- NYTT: OperationFilter för att inkludera endpoints trots [Authorize] -----------------
             options.OperationFilter<SwaggerDefaultValues>();
         });
-        
-        //Database
-        builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-        builder.Services.AddDbContext<AuthDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         var app = builder.Build();
 
@@ -155,41 +160,48 @@ public class Program
         // Seed roles and users
         using (var scope = app.Services.CreateScope())
         {
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        
-            string[] roles = { "Admin", "Member" };
-            foreach (var role in roles)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                {
-                    await roleManager.CreateAsync(new IdentityRole(role));
-                }
-            }
-        
-            // Admin user
-            var adminEmail = "admin@example.com";
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            if (adminUser == null)
-            {
-                adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-                await userManager.CreateAsync(adminUser, "Admin123!");
-                await userManager.AddToRoleAsync(adminUser, "Admin");
-            }
-        
-            // Member users
-            var memberEmails = new[] { "member1@example.com", "member2@example.com" };
-            foreach (var email in memberEmails)
-            {
-                var member = await userManager.FindByEmailAsync(email);
-                if (member == null)
-                {
-                    member = new IdentityUser { UserName = email, Email = email };
-                    await userManager.CreateAsync(member, "Member123!");
-                    await userManager.AddToRoleAsync(member, "Member");
-                }
-            }
+            var services = scope.ServiceProvider;
+            await IdentitySeed.SeedRolesAndAdminAsync(services);
         }
+        
+        //
+        // using (var scope = app.Services.CreateScope())
+        // {
+        //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        //
+        //     string[] roles = { "Admin", "Member" };
+        //     foreach (var role in roles)
+        //     {
+        //         if (!await roleManager.RoleExistsAsync(role))
+        //         {
+        //             await roleManager.CreateAsync(new IdentityRole(role));
+        //         }
+        //     }
+        //
+        //     // Admin user
+        //     var adminEmail = "admin@example.com";
+        //     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        //     if (adminUser == null)
+        //     {
+        //         adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+        //         await userManager.CreateAsync(adminUser, "Admin123!");
+        //         await userManager.AddToRoleAsync(adminUser, "Admin");
+        //     }
+        //
+        //     // Member users
+        //     var memberEmails = new[] { "member1@example.com", "member2@example.com" };
+        //     foreach (var email in memberEmails)
+        //     {
+        //         var member = await userManager.FindByEmailAsync(email);
+        //         if (member == null)
+        //         {
+        //             member = new IdentityUser { UserName = email, Email = email };
+        //             await userManager.CreateAsync(member, "Member123!");
+        //             await userManager.AddToRoleAsync(member, "Member");
+        //         }
+        //     }
+        // }
 
         app.Run();
     }
