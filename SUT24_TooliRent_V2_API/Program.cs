@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Auth;
@@ -7,6 +8,7 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using SUT24_TooliRent_V2_Application.Mapping;
 using SUT24_TooliRent_V2_Application.Services;
@@ -65,6 +67,13 @@ public class Program
             .AddDefaultTokenProviders();
         
         //Jwt
+        var jwtSettings = builder.Configuration
+            .GetSection("Jwt")
+            .Get<JwtSettings>() ?? throw new InvalidOperationException("JWT settingsare not configured");
+
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtSettings.Key)
+        );
         builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
@@ -79,13 +88,14 @@ public class Program
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    NameClaimType = JwtRegisteredClaimNames.Sub,
                     RoleClaimType = ClaimTypes.Role,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwt["Issuer"],
-                    ValidAudience = jwt["Audience"],
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
                     IssuerSigningKey = key
                 };
                 options.Events = new JwtBearerEvents
@@ -168,45 +178,6 @@ public class Program
         app.UseAuthorization();
         
         app.MapControllers();
-        
-        //
-        // using (var scope = app.Services.CreateScope())
-        // {
-        //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        //
-        //     string[] roles = { "Admin", "Member" };
-        //     foreach (var role in roles)
-        //     {
-        //         if (!await roleManager.RoleExistsAsync(role))
-        //         {
-        //             await roleManager.CreateAsync(new IdentityRole(role));
-        //         }
-        //     }
-        //
-        //     // Admin user
-        //     var adminEmail = "admin@example.com";
-        //     var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        //     if (adminUser == null)
-        //     {
-        //         adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-        //         await userManager.CreateAsync(adminUser, "Admin123!");
-        //         await userManager.AddToRoleAsync(adminUser, "Admin");
-        //     }
-        //
-        //     // Member users
-        //     var memberEmails = new[] { "member1@example.com", "member2@example.com" };
-        //     foreach (var email in memberEmails)
-        //     {
-        //         var member = await userManager.FindByEmailAsync(email);
-        //         if (member == null)
-        //         {
-        //             member = new IdentityUser { UserName = email, Email = email };
-        //             await userManager.CreateAsync(member, "Member123!");
-        //             await userManager.AddToRoleAsync(member, "Member");
-        //         }
-        //     }
-        // }
 
         app.Run();
     }
