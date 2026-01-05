@@ -2,8 +2,8 @@ namespace SUT24_TooliRent_V2_Domain.Enums;
 
 public enum BookingStatus
 {
-    // <summary>
-    /// Bokningen är skapad men ännu inte bekräftad.
+    /// <summary>
+    /// okningen är skapad men ännu inte bekräftad.
     /// </summary>
     Pending = 0,
 
