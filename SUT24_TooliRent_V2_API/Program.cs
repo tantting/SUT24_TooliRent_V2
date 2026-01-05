@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SUT24_TooliRent_V2_Application.Mapping;
 using SUT24_TooliRent_V2_Application.Services;
-using SUT24_TooliRent_V2_Application.Services.Interfaces;
+using SUT24_TooliRent_V2_Application.Interfaces;
 using SUT24_TooliRent_V2_Domain.Interfaces;
 using Microsoft.OpenApi.Models;
 using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
@@ -50,7 +50,7 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         
         //Microsoft Identity
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
@@ -65,8 +65,9 @@ public class Program
             .AddDefaultTokenProviders();
         
         //Jwt
-        var jwt = builder.Configuration.GetSection("Jwt");
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwt["Key"]!));
+        builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+        builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
         
         builder .Services
             .AddAuthentication(options =>
@@ -149,6 +150,17 @@ public class Program
             });
         }
         
+        // Seed data
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+
+            // 1. Identity
+            await IdentitySeed.SeedRolesAndAdminAsync(services);
+
+            // 2. Domändata
+            await AppSeed.SeedDomainDataAsync(services);
+        }
         
         //app.UseHttpsRedirection();
         
@@ -156,13 +168,6 @@ public class Program
         app.UseAuthorization();
         
         app.MapControllers();
-        
-        // Seed roles and users
-        using (var scope = app.Services.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            await IdentitySeed.SeedRolesAndAdminAsync(services);
-        }
         
         //
         // using (var scope = app.Services.CreateScope())
