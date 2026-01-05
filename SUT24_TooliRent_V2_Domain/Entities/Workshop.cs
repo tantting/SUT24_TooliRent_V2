@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SUT24_TooliRent_V2_Domain.Entities;
 
-public class Workshop
+public class Workshop : AuditableEntity
 { 
     [Key]
     public int Id { get; set; }
@@ -11,8 +11,4 @@ public class Workshop
 
     // Navigation properties
     public ICollection<Tool> Tools { get; set; } = new List<Tool>();
-
-    // Auditering
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
 }

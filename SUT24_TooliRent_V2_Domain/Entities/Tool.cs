@@ -3,7 +3,7 @@ using SUT24_TooliRent_V2_Domain.Enums;
 
 namespace SUT24_TooliRent_V2_Domain.Entities;
 
-public class Tool
+public class Tool : AuditableEntity
 {
     [Key]
     public int Id { get; set; }
@@ -32,8 +32,4 @@ public class Tool
 
     //Nav for  Special certificat
     public ICollection<Certification> SpecialCertifications { get; set; } = new List<Certification>();
-
-    // Auditering
-    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
 }
