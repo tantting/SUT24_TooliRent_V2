@@ -4,7 +4,7 @@ using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
 using SUT24_TooliRent_V2_Domain.Enums;
 
-namespace SUT24_TooliRent_V2_Application.Services.Interfaces;
+namespace SUT24_TooliRent_V2_Application.Interfaces;
 
 public interface IBookingService
 {
