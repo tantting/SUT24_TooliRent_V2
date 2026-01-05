@@ -2,7 +2,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
-using SUT24_TooliRent_V2_Application.Services.Interfaces;
+using SUT24_TooliRent_V2_Application.Interfaces;
 using SUT24_TooliRent_V2_Domain.Enums;
 
 namespace SUT24_TooliRent_V2.Controllers
