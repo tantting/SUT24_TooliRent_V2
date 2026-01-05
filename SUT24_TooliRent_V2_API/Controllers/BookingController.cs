@@ -47,7 +47,7 @@ namespace SUT24_TooliRent_V2.Controllers
         // Get bookings by user ID
         [HttpGet("user/{userId}")]
         [ProducesResponseType(typeof(IEnumerable<ReadBookingDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookingsByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookingsByUserId(Guid userId)
         {
             var bookings = await _bookingService.GetBookingsByUserIdAsync(userId);
             return Ok(bookings);

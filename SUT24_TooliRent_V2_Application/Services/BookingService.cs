@@ -2,12 +2,9 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using SUT24_TooliRent_V2_Application.Common;
-using SUT24_TooliRent_V2_Application.DTOs;
 using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
-using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
 using SUT24_TooliRent_V2_Application.Interfaces;
 using SUT24_TooliRent_V2_Domain.Entities;
-using SUT24_TooliRent_V2_Domain.Enums;
 using SUT24_TooliRent_V2_Domain.Interfaces;
 
 namespace SUT24_TooliRent_V2_Application.Services;
@@ -41,7 +38,7 @@ public class BookingService : IBookingService
         return booking;
     }
 
-    public Task<IEnumerable<ReadBookingDto>> GetBookingsByUserIdAsync(int userId, CancellationToken ct = default)
+    public Task<IEnumerable<ReadBookingDto>> GetBookingsByUserIdAsync(Guid userId, CancellationToken ct = default)
     {
         var bookings = _unitOfWork.Bookings.GetAllBookingsQuery()
             .Where(b => b.MemberId == userId)
