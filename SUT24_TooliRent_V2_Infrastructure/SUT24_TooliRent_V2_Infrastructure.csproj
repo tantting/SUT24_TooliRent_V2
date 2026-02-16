@@ -8,15 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="15.0.1" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.20" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.20">
+      <PackageReference Include="AutoMapper" Version="16.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.23">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.20" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.20">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.23" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.23">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
@@ -25,6 +24,16 @@
     <ItemGroup>
       <ProjectReference Include="..\SUT24_TooliRent_V2_Application\SUT24_TooliRent_V2_Application.csproj" />
       <ProjectReference Include="..\SUT24_TooliRent_V2_Domain\SUT24_TooliRent_V2_Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Inkluderar migrations .cs-filer i build -->
+        <Folder Include="Migrations\AppDb\**\*.cs" />
+        <Folder Include="Migrations\AuthDb\**\*.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>

@@ -10,7 +10,7 @@ public interface IBookingService
 {
     Task<IEnumerable<ReadBookingDto>> GetAllBookingsAsync(CancellationToken ct = default);
     Task<ReadBookingDto?> GetBookingByIdAsync(int id, CancellationToken ct = default);
-    Task<IEnumerable<ReadBookingDto>> GetBookingsByUserIdAsync(int userId, CancellationToken ct = default);
+    Task<IEnumerable<ReadBookingDto>> GetBookingsByUserIdAsync(Guid userId, CancellationToken ct = default);
     // Task<IEnumerable<ReadBookingDto>> GetBookingsByToolIdAsync(int toolId, CancellationToken ct = default);
     Task <Result<int>> CreateBookingAsync(CreateBookingRequestDto dto, CancellationToken ct = default);
     // Task <Result<ReadBookingDto>>  UpdateBookingAsync(UpdateBookingDto dto, CancellationToken ct = default);

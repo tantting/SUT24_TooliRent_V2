@@ -2,7 +2,7 @@ namespace SUT24_TooliRent_V2_Application.DTOs.AuthDTOs;
 
 public class AuthUserDto
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
 
     public string Email { get; set; } = string.Empty;
 

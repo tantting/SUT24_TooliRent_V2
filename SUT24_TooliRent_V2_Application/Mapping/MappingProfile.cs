@@ -42,8 +42,10 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.ReturnStatus.ToString()));
         
         CreateMap<Booking, ReadBookingDto>()
-            .ForMember(dest => dest.MemberName,
-                opt => opt.MapFrom(src => src.Member.Name))
+            .ForMember(dest => dest.MemberFirstName,
+                opt => opt.MapFrom(src => src.Member.FirstName))
+            .ForMember(dest => dest.MemberLastName,
+                opt => opt.MapFrom(src => src.Member.LastName))
             .ForMember(dest => dest.BookingStatus,
                 opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.Tools,

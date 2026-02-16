@@ -42,6 +42,8 @@ public class Program
         builder.Services.AddScoped<IBookingToolService, BookingToolService>();
         builder.Services.AddScoped<IBookingToolRepository, BookingToolRepository>();
         
+        builder.Services.AddScoped<IMemberLookup, MemberLookup>();
+        
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
@@ -52,7 +54,7 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<Program>();
         
         //Microsoft Identity
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
@@ -69,14 +71,14 @@ public class Program
         //Jwt
         var jwtSettings = builder.Configuration
             .GetSection("Jwt")
-            .Get<JwtSettings>() ?? throw new InvalidOperationException("JWT settingsare not configured");
+            .Get<JwtSettings>() 
+                          ?? throw new InvalidOperationException("JWT settingsare not configured");
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtSettings.Key)
         );
         builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-
         
         builder .Services
             .AddAuthentication(options =>
@@ -88,16 +90,20 @@ public class Program
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = JwtRegisteredClaimNames.Sub,
-                    RoleClaimType = ClaimTypes.Role,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.Issuer,
                     ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = key
+                    IssuerSigningKey = key,
+                    
+                    NameClaimType = JwtRegisteredClaimNames.Sub,
+                    RoleClaimType = ClaimTypes.Role
                 };
+                // Authorization 
+                builder.Services.AddAuthorization();
+                
                 options.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = ctx =>
@@ -107,7 +113,6 @@ public class Program
                     }
                 };
             });
-
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
