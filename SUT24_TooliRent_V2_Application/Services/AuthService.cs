@@ -1,11 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using SUT24_TooliRent_V2_Application.DTOs.AuthDTOs;
 using SUT24_TooliRent_V2_Application.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 
 namespace SUT24_TooliRent_V2_Application.Services;
@@ -82,26 +78,51 @@ public class AuthService : IAuthService
             Roles = roles.ToList()
         };
 
-        var accessToken = await _jwtTokenService.GenerateTokenAsync(authUser);
-
-        var refreshToken = Guid.NewGuid().ToString(); 
+        var tokenResult = await _jwtTokenService.GenerateTokenAsync(authUser);
         
         //Generate JWT
         return new AuthResponseDto
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
-            AccessTokenExpiredAtUtc = DateTime.UtcNow.AddMinutes(_jwtTokenService.DurationInMinutes)
-        }); 
+            AccessToken = tokenResult.AccessToken,
+            AccessTokenExpiredAtUtc = tokenResult.ExpiresAtUtc
+        };
     }
 
-    public Task<string?> RefreshTokenAsync(string token, CancellationToken ct)
+    public async Task<AuthResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto dto, CancellationToken ct)
     {
-        throw new NotImplementedException();
-    }
+        var principal = _jwtTokenService.GetPrincipalFromExpiredToken(dto.RefreshToken);
+        if (principal == null)
+            return null;
 
-    public Task<bool> RevokeRefreshTokenAsync(Guid refreshTokenId, CancellationToken ct)
-    {
-        throw new NotImplementedException();
+        var email = principal.FindFirstValue(ClaimTypes.Email);
+        if (email == null)
+            return null;
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return null;
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        var member = await _memberLookup.GetByIdentityUserIdAsync(user.Id, ct);
+        if (member == null)
+            return null;
+
+        var authUser = new AuthUserDto
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            FirstName = member.FirstName,
+            LastName = member.LastName,
+            Roles = roles.ToList()
+        };
+
+        var tokenResult = await _jwtTokenService.GenerateTokenAsync(authUser);
+
+        return new AuthResponseDto
+        {
+            AccessToken = tokenResult.AccessToken,
+            AccessTokenExpiredAtUtc = tokenResult.ExpiresAtUtc
+        };
     }
 }

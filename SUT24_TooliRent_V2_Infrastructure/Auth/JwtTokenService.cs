@@ -19,12 +19,14 @@ public class JwtTokenService : IJwtTokenService
             ?? throw new InvalidOperationException("JwtSettingsare not configured");
     }
     
-    public Task<string> GenerateTokenAsync(AuthUserDto user)
+    public Task<AuthTokenResult> GenerateTokenAsync(AuthUserDto user)
     {
         var claims = new List<Claim>
         {
+            //Identity
             new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            //Domain (Member)   
             new Claim("firstName", user.FirstName),
             new Claim("lastName", user.LastName)
         };
@@ -35,13 +37,46 @@ public class JwtTokenService : IJwtTokenService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var expires = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes);
+        
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+            expires: expires,
             signingCredentials: creds
         );
-        return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
+
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        
+        return Task.FromResult(new AuthTokenResult(
+            tokenString, 
+            expires));
+    }
+    
+    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        var validation = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_jwtSettings.Key)
+            ),
+            ValidateLifetime = false
+        };
+
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, validation, out _);
+            return principal;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
