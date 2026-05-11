@@ -54,8 +54,6 @@ public class BookingToolService : IBookingToolService
             booking.Status = BookingStatus.Returned;
             await _unitOfWork.SaveChangesAsync(ct);
         }
-        
-        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Ok(); 
     }

@@ -5,9 +5,6 @@ namespace SUT24_TooliRent_V2_Application.DTOs.Member.DTOs;
 
 public record CreateMemberDto
 {
-    [Key]
-    public int Id { get; set; }
-
     [Required]
     [RegularExpression(@"^\d{10}$", ErrorMessage = "Personnummer måste vara exakt 10 siffror.")]
     public string PersonalNumber { get; set; } = string.Empty;
@@ -32,8 +29,4 @@ public record CreateMemberDto
 
     [Required] 
     public bool IsActive { get; set; } = default;
-    
-    // Navigation properties
-    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-    public ICollection<Certification> Certifications { get; set; } = new List<Certification>(); 
 }

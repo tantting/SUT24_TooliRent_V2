@@ -10,12 +10,10 @@ public class UnitOfWork : IUnitOfWork
     private IBookingRepository _bookings;
     private IToolRepository _tools;
     private IBookingToolRepository _bookingTools;
-    private IMapper _mapper;
     
     public UnitOfWork(AppDbContext context, IMapper mapper)
     {
         _context = context;
-        _mapper = mapper;
     }
     
     public IBookingRepository Bookings => 

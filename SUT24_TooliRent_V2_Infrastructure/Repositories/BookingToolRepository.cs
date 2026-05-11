@@ -21,9 +21,4 @@ public class BookingToolRepository : IBookingToolRepository
             .ThenInclude(b => b.BookingTools)   
             .FirstOrDefaultAsync(bt => bt.BookingId == bookingId && bt.ToolId == toolId, ct);
     }
-
-    public async Task<bool> SaveChangesAsync(CancellationToken ct = default)
-    {
-        return await _context.SaveChangesAsync(ct).ContinueWith(t => t.Result > 0, ct);
-    }
 }
