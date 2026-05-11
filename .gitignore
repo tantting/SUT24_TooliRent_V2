@@ -25,6 +25,20 @@ Temporary Items
 # JetBrains Rider
 *.sln.iml
 
+# Default ignored files Rider
+/shelf/
+/workspace.xml
+# Rider ignored files
+/.idea.SUT24_TooliRent_V2.iml
+/projectSettingsUpdater.xml
+/modules.xml
+/contentModel.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/csharp
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp
