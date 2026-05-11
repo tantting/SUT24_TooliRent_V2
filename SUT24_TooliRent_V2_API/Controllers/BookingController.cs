@@ -19,9 +19,9 @@ namespace SUT24_TooliRent_V2.Controllers
         }
         
         /// Get all bookings
-        [Authorize(Roles = "Admin")]
+       
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(IEnumerable<ReadBookingDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookings()
         {
@@ -30,8 +30,8 @@ namespace SUT24_TooliRent_V2.Controllers
         }
 
         // Get bookings by ID
-        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ReadBookingDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ReadBookingDto>> GetBookingById(int id)
@@ -69,7 +69,7 @@ namespace SUT24_TooliRent_V2.Controllers
         }
         
         //Update a booking
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -32,11 +32,6 @@ public class ToolService : IToolService
         return tool != null ? _mapper.Map<ReadToolDto>(tool) : null;
     }
 
-    // public Task<IEnumerable<ReadToolDto>> GetToolsByNameAsync(string name, CancellationToken ct = default)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
     public async Task<IEnumerable<ReadToolDto>> GetToolsByCategoryAsync(int categoryId, CancellationToken ct = default)
     {
         var tools = await _unitOfWork.Tools.GetToolsByCategoryAsync(categoryId, ct);
