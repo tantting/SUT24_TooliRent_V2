@@ -19,29 +19,26 @@ namespace SUT24_TooliRent_V2.Controllers
         }
         
         /// Get all bookings
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Authorize]
         [ProducesResponseType(typeof(IEnumerable<ReadBookingDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookings()
         {
-            foreach (var item in User.Claims)
-            {
-                Console.WriteLine(item.Subject);
-            }
-            
             var bookings = await _bookingService.GetAllBookingsAsync();
             return Ok(bookings);
         }
 
         // Get bookings by ID
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ReadBookingDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ReadBookingDto>> GetBookingById(int id)
         {
-            var booking = await _bookingService.GetBookingByIdAsync(id);
-            if (booking == null) return NotFound($"Booking with ID {id} not found");
-            return Ok(booking);
+            var bookings = await _bookingService.GetBookingByIdAsync(id);
+            if (bookings == null) return NotFound($"Booking with ID {id} not found");
+            return Ok(bookings);
         }
 
         // Get bookings by user ID
@@ -52,7 +49,6 @@ namespace SUT24_TooliRent_V2.Controllers
             var bookings = await _bookingService.GetBookingsByUserIdAsync(userId);
             return Ok(bookings);
         }
-
         
         //Create a new booking with one or many tools
         [HttpPost]
@@ -71,6 +67,20 @@ namespace SUT24_TooliRent_V2.Controllers
                 result.Data
             );
         }
+        
+        //Update a booking
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]            
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] UpdateBookingRequestDto dto, CancellationToken ct = default)
+        {
+            var result = await _bookingService.UpdateBookingAsync(id, dto, ct);
+            if (!result.Success) return BadRequest(result.ErrorMessage);
+            return NoContent();
+        }
+        
         // Delete a booking
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

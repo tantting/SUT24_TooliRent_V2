@@ -1,8 +1,5 @@
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
 using SUT24_TooliRent_V2_Domain.Entities;
 using SUT24_TooliRent_V2_Domain.Interfaces;
 
@@ -17,63 +14,72 @@ public class BookingRepository : IBookingRepository
         _context = context;
     }
 
-    public IQueryable<Booking> GetAllBookingsQuery()
+    public async Task<List<Booking>> GetAllBookingsAsync(CancellationToken ct = default)
     {
-        return _context.Bookings
+        return await _context.Bookings
             .Include(b => b.BookingTools)
-            .ThenInclude(bt => bt.Tool)
-            .ThenInclude(t => t.Workshop)
+                .ThenInclude(bt => bt.Tool)
+                .ThenInclude(t => t.Workshop)
             .Include(b => b.BookingTools)
-            .ThenInclude(bt => bt.Tool)
-            .ThenInclude(t => t.ToolCategory)
-            .Include(b => b.Member);
+                .ThenInclude(bt => bt.Tool)
+                .ThenInclude(t => t.ToolCategory)
+            .Include(b => b.Member)
+            .ToListAsync(ct);
     }
 
-public IQueryable<Booking> GetBookingByIdQuery(int id)
+    public async Task<Booking?> GetBookingByIdAsync(int id, CancellationToken ct = default)
     {
-        return _context.Bookings
-            .Where(b => b.Id == id)
+        return await _context.Bookings
             .Include(b => b.BookingTools)
-            .ThenInclude(bt => bt.Tool)
-            .ThenInclude(t => t.Workshop)
+                .ThenInclude(bt => bt.Tool)
+                .ThenInclude(t => t.Workshop)
             .Include(b => b.BookingTools)
-            .ThenInclude(bt => bt.Tool)
-            .ThenInclude(t => t.ToolCategory)
-            .Include(b => b.Member);
+                .ThenInclude(bt => bt.Tool)
+                .ThenInclude(t => t.ToolCategory)
+            .Include(b => b.Member)
+            .FirstOrDefaultAsync(b => b.Id == id, ct);
     }
 
     public Task<List<Booking>> GetBookingsByToolIdAsync(int toolId, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return _context.Bookings
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.Workshop)
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.ToolCategory)
+            .Include(b => b.Member)
+            .Where(b => b.BookingTools.Any(bt => bt.ToolId == toolId))
+            .ToListAsync(ct);
     }
 
     public Task<List<Booking>> GetBookingsByUserIdAsync(int userId, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        return _context.Bookings
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.Workshop)
+            .Include(b => b.BookingTools)
+            .ThenInclude(bt => bt.Tool)
+            .ThenInclude(t => t.ToolCategory)
+            .Include(b => b.Member)
+            .Where(b => b.MemberId == userId)
+            .ToListAsync(ct);
     }
 
-    public void AddBooking(Booking booking, CancellationToken ct = default)
+    public void AddBooking(Booking booking)
     {
         _context.Bookings.Add(booking);
     }
 
-    public void UpdateBooking(Booking booking, CancellationToken ct = default)
+    public void UpdateBooking(Booking booking)
     {
         _context.Bookings.Update(booking);
     }
 
-    public void DeleteBooking(int id, CancellationToken ct = default)
+    public void DeleteBooking(Booking booking)
     {
-        _context.Bookings.Remove(new Booking { Id = id });
-    }
-
-    public void BookingExists(int id, CancellationToken ct = default)
-    {
-        _context.Bookings.Any(b => b.Id == id);
-    }
-
-    public async Task<bool> SaveChangesAsync(CancellationToken ct = default)
-    {
-        return await _context.SaveChangesAsync(ct).ContinueWith(t => t.Result > 0, ct);
+        _context.Bookings.Remove(booking);
     }
 }

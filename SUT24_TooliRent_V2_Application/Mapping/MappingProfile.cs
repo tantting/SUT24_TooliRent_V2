@@ -1,6 +1,7 @@
 using AutoMapper;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
 using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
+using SUT24_TooliRent_V2_Application.DTOs.BookingToolDTOs;
 using SUT24_TooliRent_V2_Domain.Entities;
 using SUT24_TooliRent_V2_Domain.Enums;
 
@@ -12,7 +13,10 @@ public class MappingProfile : Profile
     {
         // DTO to Entity mappings
         CreateMap<CreateToolDto, Tool>();
-        CreateMap<UpdateToolDto, Tool>();
+        CreateMap<UpdateToolDto, Tool>()
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));;
+        CreateMap<UpdateBookingRequestDto, Booking>()
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));;
         CreateMap<CreateBookingRequestDto, Booking>()
             .ForMember(dest => dest.Status, opt 
                 => opt.MapFrom(src => BookingStatus.Pending))
@@ -30,7 +34,7 @@ public class MappingProfile : Profile
                 opt.MapFrom(scr =>scr.Workshop.Name));;
 
         CreateMap<BookingTool, ReadBookingToolDto>()
-            .ForMember(dest => dest.Toold, opt 
+            .ForMember(dest => dest.ToolId, opt 
                 => opt.MapFrom(src => src.Tool.Id))
             .ForMember(dest => dest.ToolName,
                 opt => opt.MapFrom(src => src.Tool.Name))

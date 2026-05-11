@@ -20,7 +20,7 @@ public class ToolRepository : IToolRepository
             .AsNoTracking()
             .Include(t => t.ToolCategory)
             .Include(t => t.Workshop)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 
     public async Task<Tool?> GetToolByIdAsync(int id, CancellationToken ct = default)
@@ -72,28 +72,18 @@ public class ToolRepository : IToolRepository
             .ToListAsync(ct);
     }
 
-    public void AddTool(Tool tool, CancellationToken ct = default)
+    public void AddTool(Tool tool)
     {
-        _context.Tools.AddAsync(tool, ct);
+        _context.Tools.Add(tool);
     }
 
-    public void UpdateTool(Tool tool, CancellationToken ct = default)
+    public void UpdateTool(Tool tool)
     {
        _context.Tools.Update(tool);
     }
 
-    public void DeleteTool(int id, CancellationToken ct = default)
+    public void DeleteTool(Tool tool)
     {
-        _context.Tools.Remove(new Tool { Id = id });
-    }
-
-    public void ToolExists(int id, CancellationToken ct = default)
-    {
-        _context.Tools.Any(t => t.Id == id);
-    }
-
-    public  async Task<bool> SaveChangesAsync(CancellationToken ct = default)
-    {
-       return await _context.SaveChangesAsync(ct).ContinueWith(t => t.Result > 0, ct);
+        _context.Tools.Remove(tool);
     }
 }

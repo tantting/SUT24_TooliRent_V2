@@ -1,4 +1,5 @@
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
@@ -11,12 +12,10 @@ namespace SUT24_TooliRent_V2.Controllers
     [ApiController]
     public class ToolsController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IToolService _toolService;
         
         public ToolsController(AppDbContext context, IToolService toolService)
         {
-            _context = context;
             _toolService = toolService;
         }
         
@@ -72,6 +71,7 @@ namespace SUT24_TooliRent_V2.Controllers
         }
         
         //Create a new tool
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(ReadToolDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -79,6 +79,31 @@ namespace SUT24_TooliRent_V2.Controllers
         {
             var createdTool = await _toolService.CreateToolAsync(dto);
             return CreatedAtAction(nameof(GetToolById), new { id = createdTool.Data!.Id }, createdTool.Data);
+        }
+        
+        //Update Tool
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateTool(int id, [FromBody] UpdateToolDto dto)
+        {
+            var result = await _toolService.UpdateToolAsync(id, dto);
+            if (!result.Success) return NotFound(result.ErrorMessage);
+            return NoContent();
+        }
+        
+        //Delete Tool
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteTool(int id)
+        {
+            var result = await _toolService.DeleteToolAsync(id);
+            if (!result.Success) return NotFound(result.ErrorMessage);
+            return NoContent();
         }
     }
 }

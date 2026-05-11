@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SUT24_TooliRent_V2_Application.Common;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
 using SUT24_TooliRent_V2_Application.Services.Interfaces;
@@ -63,39 +64,36 @@ public class ToolService : IToolService
             return Result<ReadToolDto>.Fail("Tool name is required");
         
         var newTool = _mapper.Map<Tool>(dto);
-        _unitOfWork.Tools.AddTool(newTool, ct);
+        _unitOfWork.Tools.AddTool(newTool);
         await _unitOfWork.SaveChangesAsync(ct);
         
         return Result<ReadToolDto>.Ok(_mapper.Map<ReadToolDto>(newTool));
     }
 
-    public Task<Result<ReadToolDto>> UpdateToolAsync(UpdateToolDto dto, CancellationToken ct = default)
+    public async Task<Result<ReadToolDto>> UpdateToolAsync(int id, UpdateToolDto dto, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var tool = await _unitOfWork.Tools.GetToolByIdAsync(id, ct);
+        if (tool is null)
+            return Result<ReadToolDto>.Fail($"Tool with id {id} not found.");
+
+        _mapper.Map(dto, tool);
+        _unitOfWork.Tools.UpdateTool(tool);
+        await _unitOfWork.SaveChangesAsync(ct);
+
+        return Result<ReadToolDto>.Ok(_mapper.Map<ReadToolDto>(tool));
     }
 
-    public Task<Result> DeleteToolAsync(int id, CancellationToken ct = default)
+    public async Task<Result> DeleteToolAsync(int id, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var tool = await _unitOfWork.Tools.GetToolByIdAsync(id, ct);
+        
+        if (tool == null)
+            return Result.Fail($"Tool with id {id} not found");
+        
+        _unitOfWork.Tools.DeleteTool(tool);
+        await _unitOfWork.SaveChangesAsync(ct);
+        
+        return Result.Ok();
     }
-
-    public Task<bool> ToolExistsAsync(int id, CancellationToken ct = default)
-    {
-        throw new NotImplementedException();
-    }
-    
-    
-    // private IEnumerable<ReadToolDto> MapToReadToolDtos(IEnumerable<Tool> tools)
-    // {
-    //     return tools.Select(tool => new ReadToolDto
-    //     {
-    //         Id = tool.Id,
-    //         Name = tool.Name,
-    //         Description = tool.Description,
-    //         Category = tool.Category,
-    //         Condition = tool.Condition,
-    //         IsAvailable = tool.IsAvailable,
-    //     });
-    // }
 }
 
