@@ -10,20 +10,24 @@ public class UnitOfWork : IUnitOfWork
     private IBookingRepository _bookings;
     private IToolRepository _tools;
     private IBookingToolRepository _bookingTools;
-    
-    public UnitOfWork(AppDbContext context, IMapper mapper)
+    private IToolCategoryRepository _categories;
+
+    public UnitOfWork(AppDbContext context)
     {
         _context = context;
     }
-    
-    public IBookingRepository Bookings => 
+
+    public IBookingRepository Bookings =>
         _bookings ??= new BookingRepository(_context);
-    
-    public IToolRepository Tools => 
+
+    public IToolRepository Tools =>
         _tools ??= new ToolRepository(_context);
 
     public IBookingToolRepository BookingTools =>
-        _bookingTools ??= new BookingToolRepository(_context); 
+        _bookingTools ??= new BookingToolRepository(_context);
+
+    public IToolCategoryRepository Categories =>
+        _categories ??= new ToolCategoryRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken ct)
     {
