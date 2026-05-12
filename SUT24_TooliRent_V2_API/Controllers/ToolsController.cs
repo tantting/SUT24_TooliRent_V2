@@ -14,7 +14,7 @@ namespace SUT24_TooliRent_V2.Controllers
     {
         private readonly IToolService _toolService;
         
-        public ToolsController(AppDbContext context, IToolService toolService)
+        public ToolsController(IToolService toolService)
         {
             _toolService = toolService;
         }

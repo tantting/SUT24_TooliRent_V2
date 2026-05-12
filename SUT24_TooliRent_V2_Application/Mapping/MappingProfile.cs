@@ -1,4 +1,5 @@
 using AutoMapper;
+using SUT24_TooliRent_V2_Application.DTOs.CategoryDTOs;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
 using SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
 using SUT24_TooliRent_V2_Application.DTOs.BookingToolDTOs;
@@ -12,6 +13,8 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         // DTO to Entity mappings
+        CreateMap<CreateToolCategoryDto, ToolCategory>();
+        CreateMap<ToolCategory, ReadToolCategoryDto>();
         CreateMap<CreateToolDto, Tool>();
         CreateMap<UpdateToolDto, Tool>()
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));;

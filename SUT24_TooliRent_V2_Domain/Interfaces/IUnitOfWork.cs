@@ -5,5 +5,6 @@ public interface IUnitOfWork
     IBookingRepository Bookings { get; }
     IToolRepository Tools { get; }
     IBookingToolRepository BookingTools { get; }
-    Task <int> SaveChangesAsync(CancellationToken ct);   
+    IToolCategoryRepository Categories { get; }
+    Task <int> SaveChangesAsync(CancellationToken ct);
 }
