@@ -8,6 +8,7 @@ public class AuthDbContext : IdentityDbContext<IdentityUser, IdentityRole, strin
 {
     public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
     {
-        
     }
+
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 }
