@@ -38,6 +38,7 @@ public class Program
         builder.Services.AddScoped<IBookingToolService, BookingToolService>();
         builder.Services.AddScoped<IToolCategoryService, ToolCategoryService>();
         builder.Services.AddScoped<IMemberService, MemberService>();
+        builder.Services.AddScoped<IStatsService, StatsService>();
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
