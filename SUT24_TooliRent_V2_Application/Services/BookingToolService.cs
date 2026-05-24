@@ -48,13 +48,12 @@ public class BookingToolService : IBookingToolService
         }
         bookingTool.ReturnStatus = returnStatus;
 
-        var booking = bookingTool.Booking; 
+        var booking = bookingTool.Booking;
         if (booking.BookingTools.All(bt => bt.ReturnStatus == ReturnStatus.ReturnedOk))
         {
             booking.Status = BookingStatus.Returned;
-            await _unitOfWork.SaveChangesAsync(ct);
         }
-
-        return Result.Ok(); 
+        await _unitOfWork.SaveChangesAsync(ct);
+        return Result.Ok();
     }
 }
