@@ -11,6 +11,7 @@ public class UnitOfWork : IUnitOfWork
     private IToolRepository _tools;
     private IBookingToolRepository _bookingTools;
     private IToolCategoryRepository _categories;
+    private IMemberRepository _members;
 
     public UnitOfWork(AppDbContext context)
     {
@@ -28,6 +29,9 @@ public class UnitOfWork : IUnitOfWork
 
     public IToolCategoryRepository Categories =>
         _categories ??= new ToolCategoryRepository(_context);
+
+    public IMemberRepository Members =>
+        _members ??= new MemberRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken ct)
     {

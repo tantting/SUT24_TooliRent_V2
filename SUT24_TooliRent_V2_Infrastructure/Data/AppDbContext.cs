@@ -278,7 +278,6 @@ public class AppDbContext : DbContext
     {
         var entries = ChangeTracker.Entries()
             .Where(e => e.Entity is Tool
-                        || e.Entity is Member
                         || e.Entity is Workshop
                         || e.Entity is Booking
                         || e.Entity is Certification);

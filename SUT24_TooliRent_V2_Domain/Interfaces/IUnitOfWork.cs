@@ -6,5 +6,6 @@ public interface IUnitOfWork
     IToolRepository Tools { get; }
     IBookingToolRepository BookingTools { get; }
     IToolCategoryRepository Categories { get; }
+    IMemberRepository Members { get; }
     Task <int> SaveChangesAsync(CancellationToken ct);
 }
