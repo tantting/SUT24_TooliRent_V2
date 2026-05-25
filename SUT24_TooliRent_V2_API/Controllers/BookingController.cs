@@ -45,11 +45,17 @@ namespace SUT24_TooliRent_V2.Controllers
         }
 
         // Get bookings by user ID
-        [HttpGet("user/{userId}")]
+        [HttpGet("my")]
         [ProducesResponseType(typeof(IEnumerable<ReadBookingDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookingsByUserId(int userId)
+        public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookingsByUserId(CancellationToken ct)
         {
-            var bookings = await _bookingService.GetBookingsByUserIdAsync(userId);
+            var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (identityUserId == null) return Unauthorized();
+
+            var memberId = await _memberService.GetMemberIdByIdentityUserIdAsync(identityUserId, ct);
+            if (memberId == null) return Unauthorized("No member profile found for this account.");
+            
+            var bookings = await _bookingService.GetBookingsByUserIdAsync(memberId.Value, ct);
             return Ok(bookings);
         }
         
@@ -91,12 +97,30 @@ namespace SUT24_TooliRent_V2.Controllers
             return NoContent();
         }
         
-        // Delete a booking
+        // Delete a booking — Admin kan alltid ta bort, member kan bara ta bort sin egen ej påbörjade bokning
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteBooking(int id)
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteBooking(int id, CancellationToken ct)
         {
+            var booking = await _bookingService.GetBookingByIdAsync(id);
+            if (booking == null) return NotFound($"Booking with ID {id} not found.");
+
+            if (!User.IsInRole("Admin"))
+            {
+                if (booking.StartDate < DateTime.UtcNow)
+                    return BadRequest("Cannot delete a booking that has already started. Contact admin for help.");
+
+                var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (identityUserId == null) return Unauthorized();
+
+                var memberId = await _memberService.GetMemberIdByIdentityUserIdAsync(identityUserId, ct);
+                if (memberId == null) return Unauthorized("No member profile found for this account.");
+                if (booking.MemberId != memberId.Value) return Forbid();
+            }
+
             var result = await _bookingService.DeleteBookingAsync(id);
             if (!result.Success) return BadRequest(result.ErrorMessage);
             return NoContent();

@@ -7,7 +7,7 @@ namespace SUT24_TooliRent_V2_Application.DTOs.BookingDTOs;
 public class ReadBookingDto
 {
     public int Id { get; set; }
-    
+    public int MemberId { get; set; }
     public DateTime StartDate { get; set; } = DateTime.UtcNow;
     
     public DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(30);

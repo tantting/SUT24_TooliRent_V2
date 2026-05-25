@@ -8,6 +8,7 @@ namespace SUT24_TooliRent_V2.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ToolCategoryController : ControllerBase
 {
     private readonly IToolCategoryService _categoryService;

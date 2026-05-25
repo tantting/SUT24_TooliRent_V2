@@ -29,6 +29,7 @@ namespace SUT24_TooliRent_V2.Controllers
 
         //Return tool and change Returnstatus to ReturnedOk (PUT: api/bookings/123/tools/456/return)
         [HttpPut("{bookingId}/{toolId}/return")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ReturnTool(int bookingId, int toolId, [FromBody] ReturnToolDto dto)
         {
             var result = await _bookingToolService.MarkAsReturnedAsync(bookingId, toolId, dto.ReturnStatus);
