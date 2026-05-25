@@ -149,7 +149,6 @@ public class Program
             });
         }
         
-        
         //app.UseHttpsRedirection();
         
         app.UseAuthentication();
@@ -163,45 +162,6 @@ public class Program
             var services = scope.ServiceProvider;
             await IdentitySeed.SeedRolesAndAdminAsync(services);
         }
-        
-        //
-        // using (var scope = app.Services.CreateScope())
-        // {
-        //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        //
-        //     string[] roles = { "Admin", "Member" };
-        //     foreach (var role in roles)
-        //     {
-        //         if (!await roleManager.RoleExistsAsync(role))
-        //         {
-        //             await roleManager.CreateAsync(new IdentityRole(role));
-        //         }
-        //     }
-        //
-        //     // Admin user
-        //     var adminEmail = "admin@example.com";
-        //     var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        //     if (adminUser == null)
-        //     {
-        //         adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-        //         await userManager.CreateAsync(adminUser, "Admin123!");
-        //         await userManager.AddToRoleAsync(adminUser, "Admin");
-        //     }
-        //
-        //     // Member users
-        //     var memberEmails = new[] { "member1@example.com", "member2@example.com" };
-        //     foreach (var email in memberEmails)
-        //     {
-        //         var member = await userManager.FindByEmailAsync(email);
-        //         if (member == null)
-        //         {
-        //             member = new IdentityUser { UserName = email, Email = email };
-        //             await userManager.CreateAsync(member, "Member123!");
-        //             await userManager.AddToRoleAsync(member, "Member");
-        //         }
-        //     }
-        // }
 
         app.Run();
     }
