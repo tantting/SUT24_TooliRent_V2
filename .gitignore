@@ -4,6 +4,9 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 
+# appsettings
+appsettings.json
+appsettings.Development.json
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
