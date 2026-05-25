@@ -14,6 +14,7 @@ public class Member
     public DateTime MembershipDate { get; set; } = DateTime.UtcNow;
     public DateTime MembershipValidUntil { get; set; } = DateTime.UtcNow;
     public bool IsActive { get; set; } = default;
+    public string? IdentityUserId { get; set; }
     
     // Navigation properties
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();

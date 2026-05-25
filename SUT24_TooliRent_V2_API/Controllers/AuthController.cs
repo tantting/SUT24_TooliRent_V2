@@ -2,11 +2,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Infrastructure.Auth;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SUT24_TooliRent_V2.AuthDtos;
+using SUT24_TooliRent_V2_Domain.Entities;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace SUT24_TooliRent_V2.Controllers
@@ -19,14 +21,16 @@ namespace SUT24_TooliRent_V2.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly AuthDbContext _authDb;
+        private readonly AppDbContext _appDb;
 
         public AuthController(UserManager<IdentityUser> users, SignInManager<IdentityUser> signInManager,
-            IConfiguration config, AuthDbContext authDb)
+            IConfiguration config, AuthDbContext authDb, AppDbContext appDb)
         {
             _userManager = users;
             _signInManager = signInManager;
             _config = config;
             _authDb = authDb;
+            _appDb = appDb;
         }
 
         [HttpPost("register")]
@@ -38,6 +42,22 @@ namespace SUT24_TooliRent_V2.Controllers
                 return BadRequest(result.Errors);
 
             await _userManager.AddToRoleAsync(user, "Member");
+
+            var member = new Member
+            {
+                IdentityUserId = user.Id,
+                Name = dto.Name,
+                Email = dto.Email,
+                PersonalNumber = dto.PersonalNumber,
+                PhoneNumber = dto.PhoneNumber,
+                Address = dto.Address,
+                MembershipDate = DateTime.UtcNow,
+                MembershipValidUntil = DateTime.UtcNow.AddYears(1),
+                IsActive = true
+            };
+            _appDb.Members.Add(member);
+            await _appDb.SaveChangesAsync();
+
             return Ok("User registered successfully");
         }
 
