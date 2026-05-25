@@ -6,4 +6,5 @@ public interface IMemberRepository
 {
     Task<List<Member>> GetAllAsync(CancellationToken ct = default);
     Task<Member?> GetByIdAsync(int id, CancellationToken ct = default);
+    Task<Member?> GetByIdentityUserIdAsync(string identityUserId, CancellationToken ct = default);
 }

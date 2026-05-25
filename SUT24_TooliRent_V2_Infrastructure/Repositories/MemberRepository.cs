@@ -19,4 +19,7 @@ public class MemberRepository : IMemberRepository
 
     public async Task<Member?> GetByIdAsync(int id, CancellationToken ct = default)
         => await _context.Members.FindAsync([id], ct);
+
+    public async Task<Member?> GetByIdentityUserIdAsync(string identityUserId, CancellationToken ct = default)
+        => await _context.Members.FirstOrDefaultAsync(m => m.IdentityUserId == identityUserId, ct);
 }

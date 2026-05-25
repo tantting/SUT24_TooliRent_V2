@@ -7,4 +7,5 @@ public interface IMemberService
 {
     Task<IEnumerable<ReadMemberDto>> GetAllMembersAsync(CancellationToken ct = default);
     Task<Result> SetMemberActiveStatusAsync(int id, bool isActive, CancellationToken ct = default);
+    Task<int?> GetMemberIdByIdentityUserIdAsync(string identityUserId, CancellationToken ct = default);
 }

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace SUT24_TooliRent_V2.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;
+        private readonly IMemberService _memberService;
 
-        public BookingController(IBookingService bookingService)
+        public BookingController(IBookingService bookingService, IMemberService memberService)
         {
             _bookingService = bookingService;
+            _memberService = memberService;
         }
         
         /// Get all bookings
@@ -54,9 +57,16 @@ namespace SUT24_TooliRent_V2.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<int>> CreateBooking([FromBody] CreateBookingRequestDto dto, CancellationToken ct = default)
         {
-            var result = await _bookingService.CreateBookingAsync(dto, ct);
+            var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (identityUserId == null) return Unauthorized();
+
+            var memberId = await _memberService.GetMemberIdByIdentityUserIdAsync(identityUserId, ct);
+            if (memberId == null) return Unauthorized("No member profile found for this account.");
+
+            var result = await _bookingService.CreateBookingAsync(memberId.Value, dto, ct);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);

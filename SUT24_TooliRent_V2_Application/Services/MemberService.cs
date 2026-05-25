@@ -23,6 +23,12 @@ public class MemberService : IMemberService
         return _mapper.Map<IEnumerable<ReadMemberDto>>(members);
     }
 
+    public async Task<int?> GetMemberIdByIdentityUserIdAsync(string identityUserId, CancellationToken ct = default)
+    {
+        var member = await _unitOfWork.Members.GetByIdentityUserIdAsync(identityUserId, ct);
+        return member?.Id;
+    }
+
     public async Task<Result> SetMemberActiveStatusAsync(int id, bool isActive, CancellationToken ct = default)
     {
         var member = await _unitOfWork.Members.GetByIdAsync(id, ct);

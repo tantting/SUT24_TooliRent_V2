@@ -37,14 +37,15 @@ public class BookingService : IBookingService
     }
 
 
-    public async Task<Result<int>> CreateBookingAsync(CreateBookingRequestDto dto, CancellationToken ct = default)
+    public async Task<Result<int>> CreateBookingAsync(int memberId, CreateBookingRequestDto dto, CancellationToken ct = default)
     {
-        try 
+        try
         {
             var booking = _mapper.Map<Booking>(dto);
+            booking.MemberId = memberId;
             _unitOfWork.Bookings.AddBooking(booking);
             await _unitOfWork.SaveChangesAsync(ct);
-        
+
             return Result<int>.Ok(booking.Id);
         }
         catch (Exception ex)
