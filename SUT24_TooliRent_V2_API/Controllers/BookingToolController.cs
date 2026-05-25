@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SUT24_TooliRent_V2_Application.DTOs.ToolDTOs;
@@ -7,6 +8,7 @@ namespace SUT24_TooliRent_V2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BookingToolController : ControllerBase
     {
         private readonly IBookingToolService _bookingToolService;
