@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250929072136_Added IsOverDue to Booking")]
-    partial class AddedIsOverDuetoBooking
+    [Migration("20260526084129_AddMemberSeed")]
+    partial class AddMemberSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,18 +71,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("Bookings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3270),
-                            EndDate = new DateTime(2025, 10, 6, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3270),
-                            MemberId = 1,
-                            StartDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3270),
-                            Status = 1,
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3270)
-                        });
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.BookingTool", b =>
@@ -107,24 +95,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ToolId");
 
                     b.ToTable("BookingTools");
-
-                    b.HasData(
-                        new
-                        {
-                            BookingId = 1,
-                            ToolId = 1,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3290),
-                            ReturnStatus = 1,
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3290)
-                        },
-                        new
-                        {
-                            BookingId = 1,
-                            ToolId = 2,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3290),
-                            ReturnStatus = 1,
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3290)
-                        });
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Certification", b =>
@@ -164,39 +134,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ToolId");
 
                     b.ToTable("Certifications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CertificationDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3300),
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3300),
-                            ExpirationDate = new DateTime(2026, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3300),
-                            MemberId = 1,
-                            Type = "General",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3300)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CertificationDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3310),
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3310),
-                            ExpirationDate = new DateTime(2026, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3310),
-                            MemberId = 2,
-                            Type = "PowerTools",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3310)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CertificationDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3330),
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3340),
-                            ExpirationDate = new DateTime(2026, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3330),
-                            MemberId = 1,
-                            ToolId = 2,
-                            Type = "WorkshopSpecific",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3340)
-                        });
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Member", b =>
@@ -213,6 +150,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -239,32 +179,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Members");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "Storgatan 1",
-                            Email = "anna@example.com",
-                            IsActive = true,
-                            MembershipDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3240),
-                            MembershipValidUntil = new DateTime(2026, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3240),
-                            Name = "Anna Andersson",
-                            PersonalNumber = "19800101-1234",
-                            PhoneNumber = "0701234567"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Lillgatan 2",
-                            Email = "bertil@example.com",
-                            IsActive = true,
-                            MembershipDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3250),
-                            MembershipValidUntil = new DateTime(2026, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3250),
-                            Name = "Bertil Bengtsson",
-                            PersonalNumber = "19900202-5678",
-                            PhoneNumber = "0709876543"
-                        });
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Tool", b =>
@@ -320,39 +234,39 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             Condition = "Good",
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3220),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8650),
                             DemandsCertification = false,
                             Description = "Standard hammare",
                             IsAvailable = true,
                             Name = "Hammare",
                             ToolCategoryId = 1,
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3220),
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8650),
                             WorkshopId = 1
                         },
                         new
                         {
                             Id = 2,
                             Condition = "Good",
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3220),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8650),
                             DemandsCertification = true,
                             Description = "Elborrmaskin 500W",
                             IsAvailable = true,
                             Name = "Borrmaskin",
                             ToolCategoryId = 2,
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3220),
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8650),
                             WorkshopId = 1
                         },
                         new
                         {
                             Id = 3,
                             Condition = "NeedsRepair",
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3220),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8650),
                             DemandsCertification = true,
                             Description = "Industrisvets",
                             IsAvailable = false,
                             Name = "Svets",
                             ToolCategoryId = 3,
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3220),
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8650),
                             WorkshopId = 2
                         });
                 });
@@ -388,26 +302,26 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3090),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8580),
                             Description = "Skruvmejslar, hammare, tänger",
                             Name = "Handverktyg",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3090)
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8590)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3090),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8590),
                             Description = "Borrmaskiner, cirkelsågar",
                             Name = "Elverktyg",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3090)
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8590)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3090),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8590),
                             Description = "Tyngre utrustning som CNC, svets",
                             Name = "Maskiner",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3090)
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8590)
                         });
                 });
 
@@ -440,18 +354,18 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3190),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8630),
                             Description = "För träarbete",
                             Name = "Träverkstad",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3200)
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8640)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3200),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8640),
                             Description = "För metallbearbetning",
                             Name = "Metallverkstad",
-                            UpdatedDate = new DateTime(2025, 9, 29, 7, 21, 36, 91, DateTimeKind.Utc).AddTicks(3200)
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 41, 29, 137, DateTimeKind.Utc).AddTicks(8640)
                         });
                 });
 

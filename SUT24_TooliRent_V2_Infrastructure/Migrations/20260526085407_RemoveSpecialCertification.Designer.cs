@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250925144435_Updated Entities and DbContext")]
-    partial class UpdatedEntitiesandDbContext
+    [Migration("20260526085407_RemoveSpecialCertification")]
+    partial class RemoveSpecialCertification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,9 +63,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("ToolId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -73,33 +70,31 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MemberId");
 
+                    b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.BookingTool", b =>
+                {
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToolId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReturnStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("BookingId", "ToolId");
+
                     b.HasIndex("ToolId");
 
-                    b.ToTable("Bookings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2390),
-                            EndDate = new DateTime(2025, 10, 2, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2390),
-                            MemberId = 1,
-                            StartDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2390),
-                            Status = 1,
-                            ToolId = 1,
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2390)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2400),
-                            EndDate = new DateTime(2025, 9, 28, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2400),
-                            MemberId = 2,
-                            StartDate = new DateTime(2025, 9, 26, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2400),
-                            Status = 0,
-                            ToolId = 2,
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2400)
-                        });
+                    b.ToTable("BookingTools");
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Certification", b =>
@@ -122,9 +117,6 @@ namespace Infrastructure.Migrations
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ToolId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -136,32 +128,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.HasIndex("ToolId");
-
                     b.ToTable("Certifications");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CertificationDate = new DateTime(2024, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2360),
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2360),
-                            ExpirationDate = new DateTime(2026, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2360),
-                            MemberId = 1,
-                            Type = "General",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2360)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CertificationDate = new DateTime(2025, 3, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2370),
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2370),
-                            ExpirationDate = new DateTime(2026, 3, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2370),
-                            MemberId = 1,
-                            ToolId = 1,
-                            Type = "PowerTools",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2370)
-                        });
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Member", b =>
@@ -180,10 +147,16 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("MembershipDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("MembershipValidUntil")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -201,30 +174,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Members");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "Storgatan 1",
-                            Email = "anna@example.com",
-                            IsActive = true,
-                            MembershipDate = new DateTime(2023, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2300),
-                            Name = "Anna Andersson",
-                            PersonalNumber = "8501011234",
-                            PhoneNumber = "0701234567"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Lillgatan 5",
-                            Email = "bjorn@example.com",
-                            IsActive = true,
-                            MembershipDate = new DateTime(2024, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2310),
-                            Name = "Björn Berg",
-                            PersonalNumber = "9202025678",
-                            PhoneNumber = "0709876543"
-                        });
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Tool", b =>
@@ -234,10 +183,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Condition")
                         .IsRequired()
@@ -262,6 +207,9 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("ToolCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
@@ -269,6 +217,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ToolCategoryId");
 
                     b.HasIndex("WorkshopId");
 
@@ -278,54 +228,95 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Category = "PowerTools",
                             Condition = "Good",
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2330),
-                            DemandsCertification = true,
-                            Description = "En kraftfull borrmaskin",
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3420),
+                            DemandsCertification = false,
+                            Description = "Standard hammare",
                             IsAvailable = true,
-                            Name = "Borrmaskin",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2330),
+                            Name = "Hammare",
+                            ToolCategoryId = 1,
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3420),
                             WorkshopId = 1
                         },
                         new
                         {
                             Id = 2,
-                            Category = "HeavyMachinery",
                             Condition = "Good",
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2330),
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3430),
                             DemandsCertification = true,
-                            Description = "MIG-svets för metall",
+                            Description = "Elborrmaskin 500W",
                             IsAvailable = true,
-                            Name = "Svets",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2330),
-                            WorkshopId = 2
+                            Name = "Borrmaskin",
+                            ToolCategoryId = 2,
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3430),
+                            WorkshopId = 1
                         },
                         new
                         {
                             Id = 3,
-                            Category = "HandTools",
-                            Condition = "Good",
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2340),
-                            DemandsCertification = false,
-                            Description = "En klassisk hammare",
-                            IsAvailable = true,
-                            Name = "Hammare",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2340),
-                            WorkshopId = 1
+                            Condition = "NeedsRepair",
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3430),
+                            DemandsCertification = true,
+                            Description = "Industrisvets",
+                            IsAvailable = false,
+                            Name = "Svets",
+                            ToolCategoryId = 3,
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3430),
+                            WorkshopId = 2
+                        });
+                });
+
+            modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.ToolCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ToolCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3340),
+                            Description = "Skruvmejslar, hammare, tänger",
+                            Name = "Handverktyg",
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3340)
                         },
                         new
                         {
-                            Id = 4,
-                            Category = "MeasuringTools",
-                            Condition = "Good",
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2340),
-                            DemandsCertification = false,
-                            Description = "För precis mätning",
-                            IsAvailable = true,
-                            Name = "Laseravståndsmätare",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2340),
-                            WorkshopId = 1
+                            Id = 2,
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3340),
+                            Description = "Borrmaskiner, cirkelsågar",
+                            Name = "Elverktyg",
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3340)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3350),
+                            Description = "Tyngre utrustning som CNC, svets",
+                            Name = "Maskiner",
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3350)
                         });
                 });
 
@@ -358,18 +349,18 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2220),
-                            Description = "För träarbeten",
-                            Name = "Snickeriverkstaden",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2220)
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3410),
+                            Description = "För träarbete",
+                            Name = "Träverkstad",
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3410)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2220),
-                            Description = "För metallarbete och svetsning",
-                            Name = "Metallverkstaden",
-                            UpdatedDate = new DateTime(2025, 9, 25, 14, 44, 35, 36, DateTimeKind.Utc).AddTicks(2220)
+                            CreatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3410),
+                            Description = "För metallbearbetning",
+                            Name = "Metallverkstad",
+                            UpdatedDate = new DateTime(2026, 5, 26, 8, 54, 7, 317, DateTimeKind.Utc).AddTicks(3410)
                         });
                 });
 
@@ -396,13 +387,24 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.BookingTool", b =>
+                {
+                    b.HasOne("SUT24_TooliRent_V2_Domain.Entities.Booking", "Booking")
+                        .WithMany("BookingTools")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SUT24_TooliRent_V2_Domain.Entities.Tool", "Tool")
-                        .WithMany("Bookings")
+                        .WithMany("BookingTools")
                         .HasForeignKey("ToolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Member");
+                    b.Navigation("Booking");
 
                     b.Navigation("Tool");
                 });
@@ -415,24 +417,31 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SUT24_TooliRent_V2_Domain.Entities.Tool", "Tool")
-                        .WithMany("SpecialCertifications")
-                        .HasForeignKey("ToolId");
-
                     b.Navigation("Member");
-
-                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Tool", b =>
                 {
+                    b.HasOne("SUT24_TooliRent_V2_Domain.Entities.ToolCategory", "ToolCategory")
+                        .WithMany("Tools")
+                        .HasForeignKey("ToolCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("SUT24_TooliRent_V2_Domain.Entities.Workshop", "Workshop")
                         .WithMany("Tools")
                         .HasForeignKey("WorkshopId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("ToolCategory");
+
                     b.Navigation("Workshop");
+                });
+
+            modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Booking", b =>
+                {
+                    b.Navigation("BookingTools");
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Member", b =>
@@ -444,9 +453,12 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Tool", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("BookingTools");
+                });
 
-                    b.Navigation("SpecialCertifications");
+            modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.ToolCategory", b =>
+                {
+                    b.Navigation("Tools");
                 });
 
             modelBuilder.Entity("SUT24_TooliRent_V2_Domain.Entities.Workshop", b =>

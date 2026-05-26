@@ -47,6 +47,7 @@ namespace SUT24_TooliRent_V2.Controllers
         // Get bookings by user ID
         [HttpGet("my")]
         [ProducesResponseType(typeof(IEnumerable<ReadBookingDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]       
         public async Task<ActionResult<IEnumerable<ReadBookingDto>>> GetBookingsByUserId(CancellationToken ct)
         {
             var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);

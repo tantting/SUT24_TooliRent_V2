@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using SUT24_TooliRent_V2_Domain.Entities;
 
 namespace SUT24_TooliRent_V2_Application.DTOs.Member.DTOs;
 
@@ -22,10 +21,6 @@ public record CreateMemberDto
     [Required]
     [StringLength(200, ErrorMessage = "Adress får max vara 200 tecken.")]
     public string Address { get; set; } = string.Empty;
-
-    [Required]
-    [DataType(DataType.Date)]
-    public DateTime MembershipDate { get; set; } = DateTime.UtcNow;
 
     [Required] 
     public bool IsActive { get; set; } = default;

@@ -50,12 +50,6 @@ public class AppDbContext : DbContext
             .HasMany(t => t.Certifications)
             .WithMany(c => c.Tools);
 
-        // Tool -> SpecialCertifications (one-to-many)
-        modelBuilder.Entity<Certification>()
-            .HasOne(c => c.Tool)
-            .WithMany(t => t.SpecialCertifications)
-            .HasForeignKey(c => c.ToolId);
-
         // Certification -> Member (one-to-many)
         modelBuilder.Entity<Certification>()
             .HasOne(c => c.Member)
@@ -171,106 +165,6 @@ public class AppDbContext : DbContext
             }
         );
 
-// --- Member ---
-        modelBuilder.Entity<Member>().HasData(
-            new Member
-            {
-                Id = 1,
-                Name = "Anna Andersson",
-                PersonalNumber = "19800101-1234",
-                Email = "anna@example.com",
-                PhoneNumber = "0701234567",
-                Address = "Storgatan 1",
-                MembershipDate = DateTime.UtcNow,
-                MembershipValidUntil = DateTime.UtcNow.AddYears(1),
-                IsActive = true
-            },
-            new Member
-            {
-                Id = 2,
-                Name = "Bertil Bengtsson",
-                PersonalNumber = "19900202-5678",
-                Email = "bertil@example.com",
-                PhoneNumber = "0709876543",
-                Address = "Lillgatan 2",
-                MembershipDate = DateTime.UtcNow,
-                MembershipValidUntil = DateTime.UtcNow.AddYears(1),
-                IsActive = true
-            }
-        );
-
-// --- Booking ---
-        modelBuilder.Entity<Booking>().HasData(
-            new Booking
-            {
-                Id = 1,
-                MemberId = 1,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(7),
-                Status = BookingStatus.Reserved,
-                CreatedDate = DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow
-            }
-        );
-
-// --- BookingTool ---
-        modelBuilder.Entity<BookingTool>().HasData(
-            new BookingTool
-            {
-                BookingId = 1,
-                ToolId = 1,
-                ReturnStatus = ReturnStatus.NotFetched,
-                CreatedDate = DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow
-            },
-            new BookingTool
-            {
-                BookingId = 1,
-                ToolId = 2,
-                ReturnStatus = ReturnStatus.NotFetched,
-                CreatedDate = DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow
-            }
-        );
-
-// --- Standardcertifikat (gäller flera verktyg) ---
-        modelBuilder.Entity<Certification>().HasData(
-            new Certification
-            {
-                Id = 1,
-                Type = CertificationType.General,
-                MemberId = 1,
-                CertificationDate = DateTime.UtcNow,
-                ExpirationDate = DateTime.UtcNow.AddYears(1),
-                CreatedDate = DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow
-            },
-            new Certification
-            {
-                Id = 2,
-                Type = CertificationType.PowerTools,
-                MemberId = 2,
-                CertificationDate = DateTime.UtcNow,
-                ExpirationDate = DateTime.UtcNow.AddYears(1),
-                CreatedDate = DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow
-            }
-        );
-
-// --- Specialcertifikat (kopplat till ett specifikt verktyg) ---
-        modelBuilder.Entity<Certification>().HasData(
-            new Certification
-            {
-                Id = 3,
-                Type = CertificationType.WorkshopSpecific,
-                ToolId = 2,
-                MemberId = 1,
-                CertificationDate = DateTime.UtcNow,
-                ExpirationDate = DateTime.UtcNow.AddYears(1),
-                CreatedDate = DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow
-            }
-        );
 
     }
 

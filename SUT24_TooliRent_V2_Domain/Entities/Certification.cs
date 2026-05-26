@@ -9,14 +9,9 @@ public class Certification
     public int Id { get; set; }
     public CertificationType Type { get; set; }
     
-    // Many-to-many standardcertifikat
     public ICollection<Tool> Tools { get; set; } = new List<Tool>();
 
-    // Optional: specialcertifikat kopplat till ett specifikt verktyg
-    public int? ToolId { get; set; }
-    public Tool? Tool { get; set; }
-    
-    public int MemberId { get; set; } 
+    public int MemberId { get; set; }
     
     public Member Member { get; set; }
     

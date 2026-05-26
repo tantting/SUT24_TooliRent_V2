@@ -27,11 +27,7 @@ public class Tool
     public ToolCategory ToolCategory { get; set; }
     public ICollection<BookingTool> BookingTools { get; set; } = new List<BookingTool>();
     
-    // Nav for Standard certificat
     public ICollection<Certification> Certifications { get; set; } = new List<Certification>();
-
-    //Nav for  Special certificat
-    public ICollection<Certification> SpecialCertifications { get; set; } = new List<Certification>();
 
     // Auditering
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

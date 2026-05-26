@@ -161,6 +161,7 @@ public class Program
         {
             var services = scope.ServiceProvider;
             await IdentitySeed.SeedRolesAndAdminAsync(services);
+            await IdentitySeed.SeedMembersAsync(services);
         }
 
         app.Run();
