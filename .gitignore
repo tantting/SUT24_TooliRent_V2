@@ -26,6 +26,7 @@ Temporary Items
 
 
 # JetBrains Rider
+.idea/
 *.sln.iml
 
 # Default ignored files Rider
