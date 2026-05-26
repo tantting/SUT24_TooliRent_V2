@@ -67,13 +67,21 @@ public static class IdentitySeed
         
         foreach (var (dto, password) in users)
         {
-                var newUser = await userManager.FindByEmailAsync(dto.Email);
+                var existingUser = await userManager.FindByEmailAsync(dto.Email);
 
-                if (!appDbContext.Members.Any(m => m.Email == dto.Email) && newUser == null)
+                if (!appDbContext.Members.Any(m => m.Email == dto.Email))
                 {
-                    newUser = new IdentityUser { UserName = dto.Email, Email = dto.Email, EmailConfirmed = true };
-                    await userManager.CreateAsync(newUser, password); // Identity hashar automatiskt lösenordet
-                    await userManager.AddToRoleAsync(newUser, "Member");
+                    IdentityUser newUser;
+                    if (existingUser == null)
+                    {
+                        newUser = new IdentityUser { UserName = dto.Email, Email = dto.Email, EmailConfirmed = true };
+                        await userManager.CreateAsync(newUser, password);
+                        await userManager.AddToRoleAsync(newUser, "Member");
+                    }
+                    else
+                    {
+                        newUser = existingUser;
+                    }
 
                     var newMember = new Member
                     {
