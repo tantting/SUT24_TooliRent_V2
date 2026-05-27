@@ -23,7 +23,6 @@ public class StatsService : IStatsService
         return new StatsDto
         {
             TotalBookings = bookings.Count,
-            PendingBookings = bookings.Count(b => b.Status == BookingStatus.Pending),
             ReservedBookings = bookings.Count(b => b.Status == BookingStatus.Reserved),
             ActiveBookings = bookings.Count(b => b.Status == BookingStatus.Active),
             ReturnedBookings = bookings.Count(b => b.Status == BookingStatus.Returned),

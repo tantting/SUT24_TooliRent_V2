@@ -3,7 +3,6 @@ namespace SUT24_TooliRent_V2_Application.DTOs.StatsDTOs;
 public record StatsDto
 {
     public int TotalBookings { get; init; }
-    public int PendingBookings { get; init; }
     public int ReservedBookings { get; init; }
     public int ActiveBookings { get; init; }
     public int ReturnedBookings { get; init; }

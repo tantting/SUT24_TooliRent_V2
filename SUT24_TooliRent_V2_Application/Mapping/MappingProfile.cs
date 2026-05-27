@@ -24,7 +24,7 @@ public class MappingProfile : Profile
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));;
         CreateMap<CreateBookingRequestDto, Booking>()
             .ForMember(dest => dest.Status, opt 
-                => opt.MapFrom(src => BookingStatus.Pending))
+                => opt.MapFrom(src => BookingStatus.Reserved))
                 .ForMember(dest => dest.BookingTools, opt 
                 => opt.MapFrom(src => 
                     src.ToolIds.Select(id => new BookingTool { ToolId = id, ReturnStatus = ReturnStatus.NotFetched })));
