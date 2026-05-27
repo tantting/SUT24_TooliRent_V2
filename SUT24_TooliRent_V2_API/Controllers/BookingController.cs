@@ -90,7 +90,6 @@ namespace SUT24_TooliRent_V2.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize(Roles = "Admin")]            
         public async Task<IActionResult> UpdateBooking(int id, [FromBody] UpdateBookingRequestDto dto, CancellationToken ct = default)
         {
             var result = await _bookingService.UpdateBookingAsync(id, dto, ct);
